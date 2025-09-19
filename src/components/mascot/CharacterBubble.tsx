@@ -36,40 +36,67 @@ export default function CharacterBubble({
     return (
       <div className={cn("relative", className)} style={{ width: mainBubbleSize, height: mainBubbleSize }}>
         {/* Environment decoration (below main bubble) */}
+        {/* 环境装饰（支持等比例缩放和移动，和主气泡一致） */}
         <div
           className="absolute"
           style={{
             width: environmentWidth,
             height: environmentHeight,
-            left: environmentLeft,
-            bottom: environmentBottom-10
+            left: environmentLeft - 30,
+            bottom: environmentBottom - 160,
+            transform: `scale(${scaleFactor + 1}) translate(${-0}px, ${0}px)`, // 缩放和偏移与主气泡保持一致
+            transformOrigin: "top left"
           }}
         >
           <img
             alt=""
-            className="block max-w-none size-full"
+            className="block max-w-none w-full h-full"
             src={imgEnviornment}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain"
+            }}
           />
         </div>
 
         {/* Main bubble */}
-        <div className="absolute inset-0">
+        {/* 主气泡支持等比例缩放和移动 */}
+        <div
+          className="absolute"
+          style={{
+            width: mainBubbleSize+400,
+            height: mainBubbleSize+400,
+            left: 0,
+            top: 40,
+            transform: `scale(${scaleFactor}) translate(${-44}px, ${0}px)`, // 可根据需要调整translate偏移
+            transformOrigin: "top left"
+          }}
+        >
           <img
             alt=""
-            className="block max-w-none size-full"
+            className="block max-w-none w-full h-full"
             src={imgBubbleMainFeature}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain"
+            }}
           />
         </div>
 
         {/* Thoughts bubble (above main bubble, only when showThoughts is true) */}
+        {/* 思维泡泡（支持等比例缩放和移动） */}
         {showThoughts && (
           <div
             className="absolute"
             style={{
               width: thoughtsSize,
               height: thoughtsSize,
-              left: thoughtsLeft,
-              top: thoughtsTop+63
+              left: thoughtsLeft+10,
+              top: thoughtsTop + 80,
+              transform: `scale(${scaleFactor+1})`, // 让思维泡泡也能等比例缩放
+              transformOrigin: "top left" // 缩放基准点为左上角，和主气泡一致
             }}
           >
             <img

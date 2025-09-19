@@ -31,10 +31,10 @@ export default function Home() {
         </div> */}
 
         {/* 输入框 */}
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-md" style={{ position: 'relative', top: '200px' }}>
           <Button
             variant="outline"
-            className="w-full h-11 text-left justify-start text-gray-500 mt-10"
+            className="w-80 h-11 text-left justify-start text-gray-500 ml-5" // 添加ml-auto让按钮向右移动
             onClick={() => router.push('/chat')}
           >
             <MessageSquare className="h-4 w-4 mr-2" />
