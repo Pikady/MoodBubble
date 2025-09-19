@@ -1,25 +1,39 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import TopBar from './TopBar';
 
 interface AppShellProps {
+  title?: string;
   left?: React.ReactNode;
   right?: React.ReactNode;
+  showBack?: boolean;
+  onBack?: () => void;
+  showPaperEntry?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 
-export default function AppShell({ left, right, children, className }: AppShellProps) {
+export default function AppShell({
+  title,
+  left,
+  right,
+  showBack = false,
+  onBack,
+  showPaperEntry = false,
+  children,
+  className
+}: AppShellProps) {
   return (
     <div className={cn("flex flex-col min-h-screen bg-background", className)}>
       {/* 顶部导航栏 */}
-      {(left || right) && (
-        <div className="sticky top-0 z-10 bg-white border-b safe-area-top">
-          <div className="flex items-center justify-between h-14 px-4">
-            {left && <div className="flex items-center">{left}</div>}
-            {right && <div className="flex items-center">{right}</div>}
-          </div>
-        </div>
-      )}
+      <TopBar
+        title={title}
+        left={left}
+        right={right}
+        showBack={showBack}
+        onBack={onBack}
+        showPaperEntry={showPaperEntry}
+      />
 
       {/* 主要内容区域 */}
       <main className="flex-1 overflow-y-auto">

@@ -1,0 +1,20 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 328 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Enviornment">
+<ellipse id="Ellipse 27" cx="174.5" cy="74.5" rx="95.5" ry="10.5" fill="var(--fill-0, #F2F2F2)"/>
+<path id="Vector 27" d="M278 75C278 72.8333 271.8 68.1 267 64.5M278 75C277.167 72.8333 276.2 67.6 279 64C281.8 60.4 285.167 57.8333 286.5 57M278 75C279 73.6667 281.9 70.5 285.5 68.5C289.1 66.5 294 66 296 66" stroke="var(--stroke-0, #B3B3B3)" stroke-width="5" stroke-linecap="round"/>
+<path id="Vector 28" d="M307 75C307 72.8333 300.8 68.1 296 64.5M307 75C306.167 72.8333 305.2 67.6 308 64C310.8 60.4 314.167 57.8333 315.5 57M307 75C308 73.6667 310.9 70.5 314.5 68.5C318.1 66.5 323 66 325 66" stroke="var(--stroke-0, #B3B3B3)" stroke-width="5" stroke-linecap="round"/>
+<g id="Flower">
+<path id="Vector 29" d="M26.5 35.5C28 40.8333 30 48.5 33.5 56C35.2415 59.7319 39 68.5 40.5 72.5" stroke="var(--stroke-0, #B3B3B3)" stroke-width="3" stroke-linecap="round"/>
+<path id="Vector 26" d="M40.5 75C40.5 72.8333 34.3 68.1 29.5 64.5M40.5 75C39.6667 72.8333 38.7 67.6 41.5 64C44.3 60.4 47.6667 57.8333 49 57M40.5 75C41.5 73.6667 44.4 70.5 48 68.5C51.6 66.5 56.5 66 58.5 66" stroke="var(--stroke-0, #B3B3B3)" stroke-width="5" stroke-linecap="round"/>
+<path id="Star 4" d="M21.6867 14.814C23.2017 10.1512 29.7983 10.1512 31.3133 14.814V14.814C31.9909 16.8992 33.9341 18.3111 36.1267 18.3111V18.3111C41.0294 18.3111 43.0679 24.5848 39.1015 27.4666V27.4666C37.3277 28.7553 36.5854 31.0397 37.263 33.125V33.125C38.778 37.7878 33.4412 41.6652 29.4748 38.7834V38.7834C27.701 37.4947 25.299 37.4947 23.5252 38.7834V38.7834C19.5588 41.6652 14.222 37.7878 15.737 33.125V33.125C16.4146 31.0397 15.6723 28.7553 13.8985 27.4666V27.4666C9.93209 24.5848 11.9706 18.3111 16.8733 18.3111V18.3111C19.0659 18.3111 21.0091 16.8992 21.6867 14.814V14.814Z" fill="var(--fill-0, #FFBBB6)"/>
+<g id="Group 43">
+<circle id="Ellipse 28" cx="26.5001" cy="26.5" r="2.5" fill="var(--fill-0, white)"/>
+<path id="Vector 30" d="M25.931 27.4548L23.6806 24" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 33" d="M26.5986 25.9881L27.911 22.0794" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 34" d="M26.5239 25.9574L26.6334 30.079" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 31" d="M26 26.6996L30.1132 26.9846" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 32" d="M22.8025 27.4113L25.0243 27.2274" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+</g>
+</g>
+</g>
+</svg>

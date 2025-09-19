@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 408 421" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="BubbleMainFeature">
+<circle id="Ellipse 1" cx="204" cy="204" r="204" fill="var(--fill-0, #D2ECBF)"/>
+<rect id="Rectangle 2" x="111.5" y="232.5" width="5" height="15" rx="2.5" fill="var(--fill-0, #121210)" stroke="var(--stroke-0, #121210)"/>
+<rect id="Rectangle 3" x="140.5" y="232.5" width="5" height="15" rx="2.5" fill="var(--fill-0, #121210)" stroke="var(--stroke-0, #121210)"/>
+<path id="Vector 21" d="M130 374C127.833 371 122.3 365.1 117.5 365.5C111.5 366 112.5 400 107 405C102.6 409 95.5 404 92.5 401" stroke="var(--stroke-0, #121210)" stroke-width="5" stroke-linecap="round"/>
+<path id="Vector 22" d="M197 379.972C195.093 376.46 190.224 369.554 186 370.023C180.72 370.608 181.6 410.405 176.76 416.258C172.888 420.94 166.64 415.087 164 411.576" stroke="var(--stroke-0, #121210)" stroke-width="5" stroke-linecap="round"/>
+<path id="Vector 23" d="M249 279C253.833 294.333 264.5 326.2 268.5 331C272.5 335.8 279.833 336.667 283 336.5" stroke="var(--stroke-0, #121210)" stroke-width="5" stroke-linecap="round"/>
+<path id="Vector 24" d="M38 311C35.299 322.996 29.3382 347.927 27.1029 351.682C24.8676 355.438 20.7696 356.116 19 355.985" stroke="var(--stroke-0, #121210)" stroke-width="5" stroke-linecap="round"/>
+<path id="Vector 25" d="M111 275L117.358 277.543C124.511 280.404 132.489 280.404 139.642 277.543L146 275" stroke="var(--stroke-0, #121210)" stroke-width="5" stroke-linecap="round"/>
+</g>
+</svg>

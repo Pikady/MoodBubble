@@ -1,0 +1,34 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 175 165" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="BubbleThoughts">
+<path id="Ellipse 31" d="M40 153.35C43.7253 153.35 46.6504 155.928 46.6504 159C46.6504 162.072 43.7253 164.65 40 164.65C36.2747 164.65 33.3496 162.072 33.3496 159C33.3496 155.928 36.2747 153.35 40 153.35Z" fill="var(--fill-0, white)" stroke="var(--stroke-0, #666666)" stroke-width="0.7"/>
+<path id="Ellipse 32" d="M24 117.35C30.4795 117.35 35.6504 121.937 35.6504 127.5C35.6504 133.063 30.4795 137.65 24 137.65C17.5205 137.65 12.3496 133.063 12.3496 127.5C12.3496 121.937 17.5205 117.35 24 117.35Z" fill="var(--fill-0, white)" stroke="var(--stroke-0, #666666)" stroke-width="0.7"/>
+<path id="Ellipse 33" d="M87.5 0.349609C111.603 0.349609 133.408 6.88189 149.178 17.4248C164.949 27.9693 174.65 42.4987 174.65 58.5C174.65 74.5013 164.949 89.0307 149.178 99.5752C133.408 110.118 111.603 116.65 87.5 116.65C63.3972 116.65 41.5916 110.118 25.8223 99.5752C10.0506 89.0307 0.349609 74.5013 0.349609 58.5C0.349609 42.4987 10.0506 27.9693 25.8223 17.4248C41.5916 6.88189 63.3972 0.349609 87.5 0.349609Z" fill="var(--fill-0, white)" stroke="var(--stroke-0, #666666)" stroke-width="0.7"/>
+<ellipse id="Ellipse 35" cx="83.5" cy="100.5" rx="26.5" ry="3.5" fill="var(--fill-0, #F2F2F2)"/>
+<g id="Flower">
+<path id="Vector 35" d="M71 56C72.5 61.3333 65.5 67 69 74.5C70.7415 78.2319 83.5 89 85 93" stroke="var(--stroke-0, #B3B3B3)" stroke-width="3" stroke-linecap="round"/>
+<path id="Vector 36" d="M85 95.5C85 93.3333 74.8 94.1 70 90.5M85 95.5C84.1667 93.3333 83.2 88.1 86 84.5C88.8 80.9 92.1667 78.3333 93.5 77.5M85 95.5C86 94.1667 88.9 91 92.5 89C96.1 87 101 86.5 103 86.5" stroke="var(--stroke-0, #B3B3B3)" stroke-width="5" stroke-linecap="round"/>
+<path id="Star 5" d="M65.6867 32.814C67.2017 28.1512 73.7983 28.1512 75.3133 32.814V32.814C75.9909 34.8992 77.9341 36.3111 80.1267 36.3111V36.3111C85.0294 36.3111 87.0679 42.5848 83.1015 45.4666V45.4666C81.3277 46.7553 80.5854 49.0397 81.263 51.125V51.125C82.778 55.7878 77.4412 59.6652 73.4748 56.7834V56.7834C71.701 55.4947 69.299 55.4947 67.5252 56.7834V56.7834C63.5588 59.6652 58.222 55.7878 59.737 51.125V51.125C60.4146 49.0397 59.6723 46.7553 57.8985 45.4666V45.4666C53.9321 42.5848 55.9706 36.3111 60.8733 36.3111V36.3111C63.0659 36.3111 65.0091 34.8992 65.6867 32.814V32.814Z" fill="var(--fill-0, #FFBBB6)"/>
+<g id="Group 44">
+<circle id="Ellipse 34" cx="70.5001" cy="45.5" r="2.5" fill="var(--fill-0, white)"/>
+<path id="Vector 37" d="M69.931 46.4548L67.6806 43" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 38" d="M70.5986 44.9881L71.911 41.0794" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 39" d="M70.5239 44.9574L70.6334 49.079" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 40" d="M70 45.6996L74.1132 45.9846" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+<path id="Vector 41" d="M66.8025 46.4113L69.0243 46.2274" stroke="var(--stroke-0, white)" stroke-linecap="round"/>
+</g>
+</g>
+<g id="RainDrops">
+<path id="Vector 42" d="M117.5 11.5L113.458 18.5" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 43" d="M48.0415 38L44 45" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 48" d="M99.0415 5L95 12" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 49" d="M101.042 44L97 51" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 50" d="M67.0415 7L63 14" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 51" d="M138.042 42L134 49" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 44" d="M97 23L89 38" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 52" d="M32 42L24 57" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 45" d="M98.0415 63L94 70" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 46" d="M135.042 20L131 27" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+<path id="Vector 47" d="M76.0415 17L72 24" stroke="var(--stroke-0, #B8EFFB)" stroke-width="2" stroke-linecap="round"/>
+</g>
+</g>
+</svg>
