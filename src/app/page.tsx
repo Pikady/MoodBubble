@@ -4,13 +4,22 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import AppShell from '@/components/layout/AppShell';
 import CharacterBubble from '@/components/mascot/CharacterBubble';
+import PaperEntry from '@/components/ui/PaperEntry';
+import TopBar from '@/components/layout/TopBar';
 import { MessageSquare, Plus } from 'lucide-react';
 
 export default function Home() {
   const router = useRouter();
 
   return (
-    <AppShell>
+    <AppShell
+      topBar={
+        <TopBar
+          showLeft={false}
+          rightContent={<PaperEntry />}
+        />
+      }
+    >
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
         {/* CharacterBubble with idle mood and thoughts */}
         <div className="mb-8">
