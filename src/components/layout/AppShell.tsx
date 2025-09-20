@@ -52,7 +52,7 @@ export default function AppShell({
   return (
     <div className={cn("flex flex-col min-h-screen bg-background mobile:flex mobile:items-center mobile:justify-center mobile:p-4", className)}>
       {/* 桌面端移动端容器包裹器 */}
-      <div className="flex-1 w-full mobile:max-w-md mobile:border-2 mobile:border-gray-200 mobile:rounded-3xl mobile:shadow-xl mobile:overflow-hidden mobile:bg-white mobile:h-[844px] mobile:flex mobile:flex-col">
+      <div className="flex-1 w-full mobile:max-w-md mobile:border-2 mobile:border-gray-200 mobile:rounded-3xl mobile:shadow-xl mobile:overflow-hidden mobile:bg-white mobile:h-[844px] mobile:flex mobile:flex-col mobile:relative">
         {/* 桌面端状态栏 */}
         <StatusBar />
 
@@ -60,7 +60,7 @@ export default function AppShell({
         {topBar || defaultTopBar}
 
         {/* 主要内容区域 */}
-        <main className="flex-1 overflow-y-auto  overflow-x-visible">
+        <main className="relative flex-1 overflow-y-auto overflow-x-visible">
           {children}
         </main>
 
