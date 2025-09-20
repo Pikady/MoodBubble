@@ -9,54 +9,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NOTE_CONFIG, getNotesByTypeOrder } from '@/lib/noteConfig';
 import { formatRelativeTime } from '@/lib/date';
 import { Plus, FileText } from 'lucide-react';
-
-// 模拟数据
-const mockNotes = [
-  {
-    id: '1',
-    type: 'gratitude' as const,
-    content: '今天和朋友一起吃饭很开心，感谢他们的陪伴！',
-    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    ai_reply: '听起来很美好！友谊就是生活中最珍贵的礼物之一 🌟'
-  },
-  {
-    id: '2',
-    type: 'emotion' as const,
-    content: '工作压力有点大，感觉需要好好休息一下。',
-    created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    ai_reply: '辛苦了！记得劳逸结合，给自己一些放松的时间 💙'
-  },
-  {
-    id: '3',
-    type: 'reflection' as const,
-    content: '今天学到了新东西，感觉每天都在成长。',
-    created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    ai_reply: '保持学习的热情是很棒的习惯！继续加油 📚✨'
-  }
-];
+import { useNotes } from '@/hooks/useNotes';
+import { useRouter } from 'next/navigation';
 
 function NotesContent() {
   const searchParams = useSearchParams();
   const highlightId = searchParams.get('highlight');
+  const { notes, isLoading } = useNotes();
+  const router = useRouter();
 
   return (
-    <AppShell
-      topBar={
-        <TopBar
-          title="我的纸条盒"
-          rightContent={
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {}}
-            >
-              <Plus className="h-5 w-5" />
-            </Button>
-          }
-        />
-      }
-    >
+    <AppShell  showBack onBack={() => router.back()}>
+
       <div className="p-4 space-y-6">
+        {/* 加载状态 */}
+        {isLoading && (
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-4"></div>
+            <p className="text-gray-500">加载中...</p>
+          </div>
+        )}
+
         {/* 高亮卡片 */}
         {highlightId && (
           <Card className="border-2 border-yellow-400 bg-yellow-50 shadow-lg">
@@ -76,9 +49,9 @@ function NotesContent() {
         )}
 
         {/* 按类型分组的纸条 */}
-        {getNotesByTypeOrder().map((type) => {
+        {!isLoading && getNotesByTypeOrder().map((type) => {
           const config = NOTE_CONFIG[type];
-          const typeNotes = mockNotes.filter(note => note.type === type);
+          const typeNotes = notes.filter(note => note.type === type);
 
           if (typeNotes.length === 0) return null;
 
@@ -117,7 +90,7 @@ function NotesContent() {
         })}
 
         {/* 空状态 */}
-        {mockNotes.length === 0 && (
+        {!isLoading && notes.length === 0 && (
           <div className="text-center py-12">
             <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -126,7 +99,7 @@ function NotesContent() {
             <p className="text-gray-500 mb-4">
               开始写你的第一张纸条吧！
             </p>
-            <Button onClick={() => {}}>
+            <Button onClick={() => router.push('/notes/new')}>
               写纸条
             </Button>
           </div>
