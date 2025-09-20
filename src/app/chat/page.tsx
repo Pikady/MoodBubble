@@ -57,13 +57,9 @@ export default function ChatPage() {
 
   return (
     <AppShell
-      left={
-        <TopBar
-          showBack
-          onBack={() => router.back()}
-          title="和泡泡聊天"
-        />
-      }
+      title="和泡泡聊天"
+      showBack
+      onBack={() => router.back()}
     >
       <div className="flex flex-col h-full">
         {/* 消息列表 */}

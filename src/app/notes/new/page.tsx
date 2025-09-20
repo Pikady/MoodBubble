@@ -14,12 +14,12 @@ export default function NewNotePage() {
 
   return (
     <AppShell
-      left={
+      topBar={
         <TopBar
           showBack
           onBack={() => router.back()}
           title="选择纸条类型"
-          rightAction={
+          rightContent={
             <Button
               variant="ghost"
               size="icon"

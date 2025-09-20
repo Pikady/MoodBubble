@@ -3,37 +3,43 @@ import { cn } from '@/lib/utils';
 import TopBar from './TopBar';
 
 interface AppShellProps {
+  // 简单场景 - 直接传递给 TopBar
   title?: string;
-  left?: React.ReactNode;
-  right?: React.ReactNode;
   showBack?: boolean;
   onBack?: () => void;
   showPaperEntry?: boolean;
+
+  // 完全自定义 TopBar
+  topBar?: React.ReactNode;
+
+  // 基础属性
   children: React.ReactNode;
   className?: string;
 }
 
 export default function AppShell({
   title,
-  left,
-  right,
   showBack = false,
   onBack,
   showPaperEntry = false,
+  topBar,
   children,
   className
 }: AppShellProps) {
+  // 默认的 TopBar
+  const defaultTopBar = (
+    <TopBar
+      title={title}
+      showBack={showBack}
+      onBack={onBack}
+      showPaperEntry={showPaperEntry}
+    />
+  );
+
   return (
     <div className={cn("flex flex-col min-h-screen bg-background", className)}>
       {/* 顶部导航栏 */}
-      <TopBar
-        title={title}
-        left={left}
-        right={right}
-        showBack={showBack}
-        onBack={onBack}
-        showPaperEntry={showPaperEntry}
-      />
+      {topBar || defaultTopBar}
 
       {/* 主要内容区域 */}
       <main className="flex-1 overflow-y-auto">

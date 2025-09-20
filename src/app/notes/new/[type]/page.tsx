@@ -48,13 +48,9 @@ export default function WriteNotePage({ params }: { params: { type: string } }) 
 
   return (
     <AppShell
-      left={
-        <TopBar
-          showBack
-          onBack={() => router.back()}
-          title={`写${config.label}`}
-        />
-      }
+      title={`写${config.label}`}
+      showBack
+      onBack={() => router.back()}
     >
       <div className="flex flex-col h-full">
         {/* 提示卡片 */}

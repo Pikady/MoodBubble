@@ -41,10 +41,10 @@ function NotesContent() {
 
   return (
     <AppShell
-      left={
+      topBar={
         <TopBar
           title="我的纸条盒"
-          rightAction={
+          rightContent={
             <Button
               variant="ghost"
               size="icon"
