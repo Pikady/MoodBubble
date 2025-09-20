@@ -15,7 +15,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取当前用户
-    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json(
         { error: '用户未登录' },
@@ -80,7 +81,8 @@ export async function POST(request: NextRequest) {
 
             // 更新AI回复记录
             try {
-              await (await supabaseServer)
+              const chatSupabase = await supabaseServer;
+              await chatSupabase
                 .from('chat')
                 .update({
                   message: aiResponse,

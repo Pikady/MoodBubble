@@ -8,14 +8,14 @@ import { Note, NoteType, CreateNoteParams, CreateNoteResult } from '@/lib/types'
  */
 export async function createNote(params: CreateNoteParams): Promise<CreateNoteResult> {
   try {
-    const supabase = await (await supabaseServer);
+    const supabase = await supabaseServer;
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       throw new Error('用户未登录');
     }
 
-    const { data, error } = await (await supabaseServer)
+    const { data, error } = await supabase
       .from('notes')
       .insert([{
         user_id: user.id,
@@ -44,13 +44,14 @@ export async function createNote(params: CreateNoteParams): Promise<CreateNoteRe
  */
 export async function getUserNotes(): Promise<Note[]> {
   try {
-    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       return [];
     }
 
-    const { data, error } = await (await supabaseServer)
+    const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('user_id', user.id)
@@ -72,13 +73,14 @@ export async function getUserNotes(): Promise<Note[]> {
  */
 export async function getNotesByType(type: NoteType): Promise<Note[]> {
   try {
-    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       return [];
     }
 
-    const { data, error } = await (await supabaseServer)
+    const { data, error } = await supabase
       .from('notes')
       .select('*')
       .eq('user_id', user.id)
@@ -101,13 +103,14 @@ export async function getNotesByType(type: NoteType): Promise<Note[]> {
  */
 export async function deleteNote(noteId: string): Promise<void> {
   try {
-    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       throw new Error('用户未登录');
     }
 
-    const { error } = await (await supabaseServer)
+    const { error } = await supabase
       .from('notes')
       .delete()
       .eq('id', noteId)
@@ -127,13 +130,14 @@ export async function deleteNote(noteId: string): Promise<void> {
  */
 export async function updateNote(noteId: string, content: string): Promise<Note> {
   try {
-    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       throw new Error('用户未登录');
     }
 
-    const { data, error } = await (await supabaseServer)
+    const { data, error } = await supabase
       .from('notes')
       .update({ content, updated_at: new Date().toISOString() })
       .eq('id', noteId)
@@ -149,5 +153,88 @@ export async function updateNote(noteId: string, content: string): Promise<Note>
   } catch (error) {
     console.error('更新笔记失败:', error);
     throw new Error('更新笔记失败');
+  }
+}
+
+/**
+ * 更新笔记的AI回复
+ */
+export async function updateNoteAIReply(
+  noteId: string,
+  aiReply: string,
+  options?: {
+    ai_model?: string;
+    ai_latency_ms?: number;
+    tokens_input?: number;
+    tokens_output?: number;
+  }
+): Promise<Note> {
+  try {
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('用户未登录');
+    }
+
+    const updateData: any = {
+      ai_reply: aiReply,
+      updated_at: new Date().toISOString()
+    };
+
+    if (options?.ai_model) updateData.ai_model = options.ai_model;
+    if (options?.ai_latency_ms) updateData.ai_latency_ms = options.ai_latency_ms;
+    if (options?.tokens_input) updateData.tokens_input = options.tokens_input;
+    if (options?.tokens_output) updateData.tokens_output = options.tokens_output;
+
+    const { data, error } = await supabase
+      .from('notes')
+      .update(updateData)
+      .eq('id', noteId)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('更新笔记AI回复失败:', error);
+    throw new Error('更新笔记AI回复失败');
+  }
+}
+
+/**
+ * 获取单个笔记详情
+ */
+export async function getNoteById(noteId: string): Promise<Note | null> {
+  try {
+    const supabase = await supabaseServer;
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('notes')
+      .select('*')
+      .eq('id', noteId)
+      .eq('user_id', user.id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null; // 笔记不存在
+      }
+      throw error;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('获取笔记详情失败:', error);
+    throw new Error('获取笔记详情失败');
   }
 }

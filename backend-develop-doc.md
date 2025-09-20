@@ -41,6 +41,7 @@
 | user\_id    | uuid      | 用户 ID，关联 auth.users |
 | type        | text      | 纸条类型（见下方枚举）         |
 | content     | text      | 纸条内容                |
+| ai\_reply     | text      | ai回复               |
 | created\_at | timestamp | 创建时间                |
 
 **type 枚举：**

@@ -88,6 +88,33 @@ export function useNotes(type?: NoteType) {
     mutate();
   };
 
+  // 生成笔记的AI回复
+  const generateAIReply = async (noteId: string) => {
+    const response = await fetch('/api/notes/generate-ai-reply', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ noteId }),
+    });
+
+    if (!response.ok) {
+      throw new Error('生成AI回复失败');
+    }
+
+    const result = await response.json();
+
+    // 更新本地缓存
+    mutate();
+
+    return result;
+  };
+
+  // 获取没有AI回复的笔记
+  const getNotesWithoutAIReply = () => {
+    return (notes || []).filter(note => !note.ai_reply);
+  };
+
   return {
     notes: notes || [],
     isLoading,
@@ -95,6 +122,8 @@ export function useNotes(type?: NoteType) {
     createNote,
     updateNote,
     deleteNote,
+    generateAIReply,
+    getNotesWithoutAIReply,
     refetch: mutate
   };
 }
