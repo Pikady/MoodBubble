@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 
 // 检查Supabase是否已配置
 function isSupabaseConfigured() {
@@ -25,6 +25,7 @@ export async function loginWithEmailPassword(params: {
       throw new Error('Supabase未配置，请在.env.local文件中配置正确的Supabase URL和密钥');
     }
 
+    const supabase = await supabaseServer;
     const { data, error } = await supabase.auth.signInWithPassword({
       email: params.email,
       password: params.password,
@@ -88,6 +89,7 @@ export async function loginWithEmailPassword(params: {
  */
 export async function logout() {
   try {
+    const supabase = await supabaseServer;
     const { error } = await supabase.auth.signOut();
 
     if (error) {
@@ -106,6 +108,7 @@ export async function logout() {
  */
 export async function getCurrentUser() {
   try {
+    const supabase = await supabaseServer;
     const { data: { user }, error } = await supabase.auth.getUser();
 
     if (error || !user) {

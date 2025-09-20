@@ -45,7 +45,7 @@ export const NOTE_CONFIG: Record<NoteType, NoteUiConfig> = {
     tiltDeg: -2,
     order: 3,
   },
-  thought: {
+  reflection: {
     label: '思考纸条',
     prompt: '最近有什么值得思考的事情吗？',
     cardBg: 'bg-[#FFF0B3]',

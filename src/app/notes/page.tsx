@@ -28,7 +28,7 @@ const mockNotes = [
   },
   {
     id: '3',
-    type: 'thought' as const,
+    type: 'reflection' as const,
     content: '今天学到了新东西，感觉每天都在成长。',
     created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
     ai_reply: '保持学习的热情是很棒的习惯！继续加油 📚✨'

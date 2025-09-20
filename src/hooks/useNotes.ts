@@ -10,6 +10,10 @@ import { supabase } from '@/lib/supabase';
 export function useNotes(type?: NoteType) {
 
   const fetchNotes = async (): Promise<Note[]> => {
+    if (!supabase) {
+      throw new Error('Supabase 客户端未初始化');
+    }
+
     const { data, error } = await supabase
       .from('notes')
       .select('*')
@@ -38,6 +42,10 @@ export function useNotes(type?: NoteType) {
 
   // 创建笔记
   const createNote = async (params: { type: NoteType; content: string }) => {
+    if (!supabase) {
+      throw new Error('Supabase 客户端未初始化');
+    }
+
     const { data, error } = await supabase
       .from('notes')
       .insert([params])
@@ -56,6 +64,10 @@ export function useNotes(type?: NoteType) {
 
   // 更新笔记
   const updateNote = async (noteId: string, content: string) => {
+    if (!supabase) {
+      throw new Error('Supabase 客户端未初始化');
+    }
+
     const { data, error } = await supabase
       .from('notes')
       .update({ content, updated_at: new Date().toISOString() })
@@ -75,6 +87,10 @@ export function useNotes(type?: NoteType) {
 
   // 删除笔记
   const deleteNote = async (noteId: string) => {
+    if (!supabase) {
+      throw new Error('Supabase 客户端未初始化');
+    }
+
     const { error } = await supabase
       .from('notes')
       .delete()

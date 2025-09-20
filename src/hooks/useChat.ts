@@ -15,6 +15,10 @@ export function useChat(sessionId?: string) {
   // 获取聊天历史
   const fetchChatHistory = async () => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase 客户端未初始化');
+      }
+
       let query = supabase
         .from('chat')
         .select('*')
@@ -147,6 +151,10 @@ export function useChat(sessionId?: string) {
   // 清空聊天记录
   const clearChat = async () => {
     try {
+      if (!supabase) {
+        throw new Error('Supabase 客户端未初始化');
+      }
+
       let query = supabase
         .from('chat')
         .delete();
