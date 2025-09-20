@@ -53,9 +53,9 @@ export default function WriteNotePage() {
 
 
 
-      {/* 让整个输入区域整体向下移动，比如加上 marginTop */}
-      <div className="min-h-dvh flex flex-col" style={{ marginTop: '130px' }}>
-        <div className="px-4 pt-4">
+      <div className="p-4 space-y-6" style={{ position: 'relative', top: '100px' }}> 
+
+        <div>
           <TiltedNoteInput
             label={cfg.label}
             placeholder={cfg.prompt || "今天过得怎么样？让我更了解你一些吧～"}
@@ -69,9 +69,7 @@ export default function WriteNotePage() {
             disabled={isLoading}
           />
         </div>
-        <div className="px-4 mt-6 text-xs text-black/40">{content.length} 字</div>
-        {/* 下面可留白，保持图2那种上重下轻的构图 */}
-        {/* <div className="flex-1" /> */}
+        <div className="text-xs text-black/40">{content.length} 字</div>
       </div>
     </AppShell>
   );
