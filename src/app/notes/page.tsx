@@ -19,7 +19,7 @@ function ClipBoxContent() {
       goodnight: [],
       gratitude: [],
       emotion: [],
-      reflection: []
+      thought: []
     };
 
     notes.forEach(note => {

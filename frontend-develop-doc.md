@@ -96,7 +96,7 @@ app/actions/
 # 3. 设计系统与主题（配置驱动）
 
 ```ts
-export type NoteType = 'goodnight'|'gratitude'|'emotion'|'reflection';
+export type NoteType = 'goodnight'|'gratitude'|'emotion'|'thought';
 
 export const NOTE_CONFIG: Record<NoteType, {
   label: string;
@@ -107,7 +107,7 @@ export const NOTE_CONFIG: Record<NoteType, {
 }> = {
   goodnight:  { label: '晚安纸条', color:'text-violet-700', cardBg:'bg-violet-100',  prompt:'今天过得怎么样？写点晚安心事吧~', order:2 },
   gratitude:  { label: '感恩纸条', color:'text-green-700',  cardBg:'bg-green-100',   prompt:'记录你今天觉得开心/感恩的小瞬间！', order:1 },
-  reflection: { label: '思考纸条', color:'text-amber-700',  cardBg:'bg-amber-100',   prompt:'今天有什么想法/反思？留给未来的你~', order:3 },
+  thought: { label: '思考纸条', color:'text-amber-700',  cardBg:'bg-amber-100',   prompt:'今天有什么想法/反思？留给未来的你~', order:3 },
   emotion:    { label: '情绪纸条', color:'text-sky-700',    cardBg:'bg-sky-100',     prompt:'你现在的感觉是什么？写下来会轻松些~', order:4 },
 };
 ```

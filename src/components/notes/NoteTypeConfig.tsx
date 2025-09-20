@@ -17,7 +17,7 @@ export const noteTypeConfig = {
       color: "bg-blue-200",
       tilt: -3
     },
-    reflection: {
+    thought: {
       title: "思考纸条",
       prompt: "最近有什么值得思考的事情吗？",
       color: "bg-yellow-200",

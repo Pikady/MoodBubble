@@ -8,25 +8,25 @@ const BoxHeightActiveDict = {
   gratitude: {
     gratitude: '100%',
     goodnight: '440px',
-    reflection: '380px',
+    thought: '380px',
     emotion: '320px',
   },
   goodnight: {
     gratitude: '100%',
     goodnight: 'calc(100% - 90px)',
-    reflection: '380px',
+    thought: '380px',
     emotion: '320px',
   },
-  reflection: {
+  thought: {
     gratitude: '100%',
     goodnight: 'calc(100% - 90px)',
-    reflection: 'calc(100% - 150px)',
+    thought: 'calc(100% - 150px)',
     emotion: '320px',
   },
   emotion: {
     gratitude: '100%',
     goodnight: 'calc(100% - 90px)',
-    reflection: 'calc(100% - 150px)',
+    thought: 'calc(100% - 150px)',
     emotion: 'calc(100% - 210px)',
   }
 };
@@ -59,11 +59,11 @@ export default function NoteBoxList({ noteboxes }: NoteBoxListProps) {
           )} notes={noteboxes.goodnight} type="goodnight" onClick={() => handleClick('goodnight')}></NoteBoxCard>
         <NoteBoxCard
           style={{
-            height: BoxHeightActiveDict[activeBox].reflection,
+            height: BoxHeightActiveDict[activeBox].thought,
           }}
           className={cn(
             "absolute bottom-0 z-3000 w-[100%]",
-          )} notes={noteboxes.reflection} type="reflection" onClick={() => handleClick('reflection')}></NoteBoxCard>
+          )} notes={noteboxes.thought} type="thought" onClick={() => handleClick('thought')}></NoteBoxCard>
         <NoteBoxCard
           style={{
             height: BoxHeightActiveDict[activeBox].emotion,

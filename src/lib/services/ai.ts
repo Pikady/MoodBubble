@@ -166,7 +166,7 @@ export function getNoteTypePrompt(noteType: string): AIChatMessage {
       role: 'system' as const,
       content: '用户正在分享情绪。请用理解、共情的语调回应，帮助他们识别和接纳自己的情绪，提供适当的支持。'
     },
-    reflection: {
+    thought: {
       role: 'system' as const,
       content: '用户正在进行深度思考。请用思考性、启发性的语调回应，帮助他们深入思考，提供新的视角。'
     }

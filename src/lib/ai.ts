@@ -28,7 +28,7 @@ function getSystemPrompt(type: NoteType): string {
     goodnight: '你是一个温暖的晚安伙伴，用简短温柔的话语回复用户的晚安心事，60字以内。',
     gratitude: '你是一个积极向上的伙伴，用鼓励的话语回应用户的感恩分享，60字以内。',
     emotion: '你是一个贴心的倾听者，用理解和关怀的话语回应用户的情绪表达，60字以内。',
-    reflection: '你是一个智慧的朋友，用深思的话语回应用户的思考和反思，60字以内。'
+    thought: '你是一个智慧的朋友，用深思的话语回应用户的思考和反思，60字以内。'
   };
 
   return prompts[type];
@@ -39,7 +39,7 @@ function getMockReply(type: NoteType, content: string): string {
     goodnight: '晚安，愿你有个好梦~ 明天又是充满希望的一天！🌙',
     gratitude: '感恩的心真的很美好！生活中的小确幸最值得珍惜 🌟',
     emotion: '我理解你的感受。情绪的起伏是正常的，给自己一些时间和空间 💙',
-    reflection: '深度思考让我们成长！你的想法很有价值，继续探索吧 🤔'
+    thought: '深度思考让我们成长！你的想法很有价值，继续探索吧 🤔'
   };
 
   return replies[type];

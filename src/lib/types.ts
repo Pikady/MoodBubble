@@ -1,4 +1,4 @@
-export type NoteType = 'goodnight' | 'gratitude' | 'emotion' | 'reflection';
+export type NoteType = 'goodnight' | 'gratitude' | 'emotion' | 'thought';
 
 export interface Note {
   id: string;
@@ -71,7 +71,7 @@ export const NOTE_CONFIG: Record<NoteType, {
     ribbonBg: "bg-[#B9E6FA]/70",
     tilt: -2,
   },
-  reflection: {
+  thought: {
     label: "思考纸条",
     prompt: "最近有什么值得思考的事情吗？",
     cardBg: "bg-[#FFF0B3]",

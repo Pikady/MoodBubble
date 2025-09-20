@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 This is a mobile-first emotional wellness app called "情绪泡泡" (Mood Bubble) that allows users to:
-- Write emotional notes in 4 categories (goodnight, gratitude, emotion, reflection)
+- Write emotional notes in 4 categories (goodnight, gratitude, emotion, thought)
 - Chat with an AI companion
 - View and manage their notes in a grouped card interface
 
@@ -66,7 +66,7 @@ The app uses a central configuration pattern in `src/lib/noteConfig.ts` that def
 
 ### Note Type System
 ```typescript
-type NoteType = 'goodnight' | 'gratitude' | 'emotion' | 'reflection';
+type NoteType = 'goodnight' | 'gratitude' | 'emotion' | 'thought';
 ```
 Never hardcode these values - always import from types/noteConfig.
 

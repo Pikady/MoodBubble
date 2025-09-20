@@ -18,7 +18,7 @@ interface NoteBoxCardProps {
 const labelBgDict = {
   gratitude:  { background: 'radial-gradient(circle 8px at top, transparent 8px, #D2ECBF)', right: "30px"},
   goodnight:  { background: 'radial-gradient(circle 8px at top, transparent 8px, #B9B6FF)', right: "60px"},
-  reflection: { background: 'radial-gradient(circle 8px at top, transparent 8px, #FFF9B6)', right: "90px"},
+  thought: { background: 'radial-gradient(circle 8px at top, transparent 8px, #FFF9B6)', right: "90px"},
   emotion:    { background: 'radial-gradient(circle 8px at top, transparent 8px, #B8EFFB)', right: "120px"},
 }
 
