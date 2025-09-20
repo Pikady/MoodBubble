@@ -38,7 +38,7 @@ export default function Home() {
         </div> */}
 
         {/* 输入框 */}
-        <div className="w-full max-w-md" style={{ position: 'relative', top: '200px' }}>
+        <div className="w-full max-w-md mobile:absolute mobile:bottom-8 mobile:left-1/2 mobile:transform mobile:-translate-x-1/2" style={{ position: 'relative', top: '200px' }}>
           <Button
             variant="outline"
             className="w-80 h-11 text-left justify-start text-gray-500 ml-5" // 添加ml-auto让按钮向右移动

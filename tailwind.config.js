@@ -13,6 +13,10 @@ module.exports = {
       center: true,
       padding: "2rem",
       screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1400px",
       },
     },
@@ -56,6 +60,11 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      screens: {
+        'mobile': '375px',
+        'tablet': '768px',
+        'desktop': '1024px',
       },
       keyframes: {
         "accordion-down": {
