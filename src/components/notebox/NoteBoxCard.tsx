@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import NoteBoxContent from '@/components/notebox/NoteBoxContent';
 
 interface NoteBoxCardProps {
-  type: string,
+  type: NoteType,
   notes: Note[],
   highlight?: boolean;
   showAIReply?: boolean;

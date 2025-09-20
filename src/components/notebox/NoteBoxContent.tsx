@@ -7,18 +7,18 @@ interface NoteBoxContentProps {
 
 function formatDateToChinese(dateString: string): string {
   const date = new Date(dateString);
-  
+
   // 获取年月日
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // 月份从0开始，需要+1
   const day = date.getDate();
-  
+
   // 格式化为 xxxx年xx月xx日
   return `${year}年${month.toString().padStart(2, '0')}月${day.toString().padStart(2, '0')}日`;
 }
 
 export default function NoteBoxContent({notes} : NoteBoxContentProps) {
-  
+
   return (
     <div className="mx-2 mt-2">
       {notes.map((it) => (

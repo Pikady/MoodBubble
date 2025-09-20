@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import NoteBoxCard from '@/components/notebox/NoteBoxCard'
 import { ClipboardMinus } from 'lucide-react';
+import { Note, NoteType } from '@/lib/types';
 
 const BoxHeightActiveDict = {
   gratitude: {
@@ -30,10 +31,16 @@ const BoxHeightActiveDict = {
   }
 };
 
-export default function NoteBoxList({ noteboxes }) {
-  const [activeBox, setActiveBox] = useState('gratitude'); // null 表示没有选中的 box
+interface NoteBoxListProps {
+  noteboxes: {
+    [key in NoteType]: Note[];
+  };
+}
 
-  const handleClick = (type: string) => {
+export default function NoteBoxList({ noteboxes }: NoteBoxListProps) {
+  const [activeBox, setActiveBox] = useState<NoteType>('gratitude'); // null 表示没有选中的 box
+
+  const handleClick = (type: NoteType) => {
     setActiveBox(type);
   };
 
