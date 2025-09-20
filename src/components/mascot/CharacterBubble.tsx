@@ -3,12 +3,13 @@ import { cn } from '@/lib/utils';
 
 // Local SVG assets
 const imgBubbleMainFeature = "/images/mascot/bubble-main-feature.svg";
+const imgBubbleWatching = "/images/mascot/bubble-watching.svg";
 const imgBubbleThoughts = "/images/mascot/bubble-thoughts.svg";
 const imgEnviornment = "/images/mascot/environment.svg";
 
 interface CharacterBubbleProps {
   size?: number;
-  mood?: 'idle' | 'typing' | 'thinking';
+  mood?: 'idle' | 'typing' | 'thinking' | 'watching';
   className?: string;
   showThoughts?: boolean;
 }
@@ -97,6 +98,94 @@ export default function CharacterBubble({
               top: thoughtsTop + 80,
               transform: `scale(${scaleFactor+1})`, // 让思维泡泡也能等比例缩放
               transformOrigin: "top left" // 缩放基准点为左上角，和主气泡一致
+            }}
+          >
+            <img
+              alt=""
+              className="block max-w-none size-full"
+              src={imgBubbleThoughts}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (mood === 'watching') {
+    // Watching mood specific sizing and positioning
+    const watchingScaleFactor = size / 408;
+    const watchingBubbleSize = size;
+    const watchingThoughtsSize = 175 * watchingScaleFactor;
+    const watchingEnvironmentHeight = 85 * watchingScaleFactor;
+    const watchingEnvironmentWidth = 325 * watchingScaleFactor;
+
+    // Watching mood specific positions
+    const watchingThoughtsLeft = 211 * watchingScaleFactor;
+    const watchingThoughtsTop = -165 * watchingScaleFactor;
+    const watchingEnvironmentLeft = 1 * watchingScaleFactor;
+    const watchingEnvironmentBottom = 1 * watchingScaleFactor;
+
+    return (
+      <div className={cn("relative", className)} style={{ width: watchingBubbleSize, height: watchingBubbleSize }}>
+        {/* Environment decoration for watching mood */}
+        <div
+          className="absolute"
+          style={{
+            width: watchingEnvironmentWidth,
+            height: watchingEnvironmentHeight,
+            left: watchingEnvironmentLeft - 30,
+            bottom: watchingEnvironmentBottom - 160,
+            transform: `scale(${watchingScaleFactor + 1}) translate(${-0}px, ${0}px)`,
+            transformOrigin: "top left"
+          }}
+        >
+          <img
+            alt=""
+            className="block max-w-none w-full h-full"
+            src={imgEnviornment}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain"
+            }}
+          />
+        </div>
+
+        {/* Main watching bubble */}
+        <div
+          className="absolute"
+          style={{
+            width: watchingBubbleSize+400,
+            height: watchingBubbleSize+400,
+            left: 0,
+            top: 40,
+            transform: `scale(${watchingScaleFactor}) translate(${-44}px, ${0}px)`,
+            transformOrigin: "top left"
+          }}
+        >
+          <img
+            alt=""
+            className="block max-w-none w-full h-full"
+            src={imgBubbleWatching}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain"
+            }}
+          />
+        </div>
+
+        {/* Thoughts bubble for watching mood */}
+        {showThoughts && (
+          <div
+            className="absolute"
+            style={{
+              width: watchingThoughtsSize,
+              height: watchingThoughtsSize,
+              left: watchingThoughtsLeft+10,
+              top: watchingThoughtsTop + 80,
+              transform: `scale(${watchingScaleFactor+1})`,
+              transformOrigin: "top left"
             }}
           >
             <img

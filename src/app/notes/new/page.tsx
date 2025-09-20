@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { NOTE_CONFIG } from '@/lib/noteConfig';
 import { NOTE_TYPES } from '@/lib/noteConfig';
 import { ArrowLeft, Notebook } from 'lucide-react';
+import CharacterBubble from '@/components/mascot/CharacterBubble';
 
 export default function NewNotePage() {
   const router = useRouter();
@@ -18,20 +19,18 @@ export default function NewNotePage() {
         <TopBar
           showBack
           onBack={() => router.back()}
-          title="选择纸条类型"
-          rightContent={
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => router.push('/notes')}
-            >
-              <Notebook className="h-5 w-5" />
-            </Button>
-          }
         />
       }
     >
       <div className="p-4 space-y-4">
+        {/* Watching mood character bubble */}
+        <div className="flex justify-center mb-6">
+          <CharacterBubble
+            mood="watching"
+            size={80}
+            className="opacity-80"
+          />
+        </div>
         {NOTE_TYPES.map((type) => {
           const config = NOTE_CONFIG[type];
           return (
