@@ -5,18 +5,28 @@ import { Button } from '@/components/ui/button';
 interface PaperEntryProps {
   className?: string;
   onClick?: () => void;
+  showLogin?: boolean;
+  showDemo?: boolean;
 }
 
-export default function PaperEntry({ className, onClick }: PaperEntryProps) {
+export default function PaperEntry({ className, onClick, showLogin, showDemo }: PaperEntryProps) {
   const router = useRouter();
 
   const handleClick = () => {
     if (onClick) {
       onClick();
+    } else if (showLogin) {
+      router.push('/auth/login');
+    } else if (showDemo) {
+      router.push('/auth/demo');
     } else {
       router.push('/notes/new');
     }
   };
+
+  const buttonText = showDemo ? "演示登录" : showLogin ? "登录" : "泡泡纸条";
+  const iconSrc = showDemo ? "/images/mascot/demo-icon.svg" : showLogin ? "/images/mascot/login-icon.svg" : "/images/mascot/edit-icon.svg";
+  const iconAlt = showDemo ? "演示" : showLogin ? "登录" : "编辑";
 
   return (
     <Button
@@ -30,11 +40,11 @@ export default function PaperEntry({ className, onClick }: PaperEntryProps) {
       `}
     >
       <img
-        src="/images/mascot/edit-icon.svg"
-        alt="编辑"
+        src={iconSrc}
+        alt={iconAlt}
         className="w-4 h-4 mr-2"
       />
-      泡泡纸条
+      {buttonText}
     </Button>
   );
 }
