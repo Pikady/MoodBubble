@@ -1,95 +1,67 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import AppShell from '@/components/layout/AppShell';
-import TopBar from '@/components/layout/TopBar';
-import { Card, CardContent } from '@/components/ui/card';
-import { NOTE_CONFIG } from '@/lib/noteConfig';
-import { NoteType } from '@/lib/types';
-import { ArrowLeft, Send } from 'lucide-react';
+import { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import AppShell from "@/components/layout/AppShell";
+import TiltedNoteInput from "@/components/notes/TiltedNoteInput";
+import { NOTE_CONFIG } from "@/lib/noteConfig";
+import { NoteType } from "@/lib/types";
+import CharacterBubble from '@/components/mascot/CharacterBubble';
 
-export default function WriteNotePage({ params }: { params: { type: string } }) {
+export default function WriteNotePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const type = params.type as NoteType;
-  const config = NOTE_CONFIG[type];
-  const [content, setContent] = useState('');
+  const params = useParams<{ type?: string }>();
+  const type = (params?.type ?? "goodnight") as NoteType;
+  const cfg = NOTE_CONFIG[type];
+
+  const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  if (!config) {
-    return (
-      <AppShell>
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h1 className="text-xl font-semibold mb-2">纸条类型不存在</h1>
-            <Button onClick={() => router.push('/notes/new')}>
-              返回选择
-            </Button>
-          </div>
-        </div>
-      </AppShell>
-    );
-  }
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!content.trim() || isLoading) return;
-
     setIsLoading(true);
-
-    // 模拟提交过程
+    // TODO: 调用你的保存逻辑
     setTimeout(() => {
-      const noteId = Math.random().toString(36).substr(2, 9);
       setIsLoading(false);
-      router.push(`/notes?highlight=${noteId}`);
-    }, 1500);
+      router.push("/notes");
+    }, 600);
   };
 
   return (
-    <AppShell
-      title={`写${config.label}`}
-      showBack
-      onBack={() => router.back()}
-    >
-      <div className="flex flex-col h-full">
-        {/* 提示卡片 */}
-        <div className="p-4">
-          <Card className={`${config.cardBg} border-l-4 ${config.color.replace('text', 'border')}`}>
-            <CardContent className="p-4">
-              <p className={`text-sm font-medium ${config.color}`}>
-                {config.prompt}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+    <AppShell title={`写${cfg.label}`} showBack onBack={() => router.back()}>
 
-        {/* 写作区域 */}
-        <div className="flex-1 p-4">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="在这里写下你的想法..."
-            className="w-full h-full min-h-[200px] p-4 border border-input rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+      {/* 吉祥物占位 */}
+      <div className="px-4 pt-0 pb-4" style={{ position: 'relative', top: '-25px' }}>
+        <div className="flex justify-left mb-6">
+          <CharacterBubble
+            mood="watching"
+            size={150}
+            className="opacity-80"
           />
         </div>
+      </div>
 
-        {/* 底部操作栏 */}
-        <div className="sticky bottom-0 bg-white border-t p-4 safe-area-bottom">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              {content.length} 字
-            </span>
-            <Button
-              onClick={handleSubmit}
-              disabled={!content.trim() || isLoading}
-              className="h-11 px-6"
-            >
-              {isLoading ? '提交中...' : '发送纸条'}
-              <Send className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
+
+
+      {/* 让整个输入区域整体向下移动，比如加上 marginTop */}
+      <div className="min-h-dvh flex flex-col" style={{ marginTop: '130px' }}>
+        <div className="px-4 pt-4">
+          <TiltedNoteInput
+            label={cfg.label}
+            placeholder={cfg.prompt || "今天过得怎么样？让我更了解你一些吧～"}
+            value={content}
+            onChange={setContent}
+            onSubmit={handleSubmit}
+            bgClass={cfg.cardBg}
+            accentClass={(cfg as any).ribbonBg ?? "bg-[#BDB2FF]/65"}
+            tilt={cfg.tiltDeg ?? -7}
+            autoFocus
+            disabled={isLoading}
+          />
         </div>
+        <div className="px-4 mt-6 text-xs text-black/40">{content.length} 字</div>
+        {/* 下面可留白，保持图2那种上重下轻的构图 */}
+        {/* <div className="flex-1" /> */}
       </div>
     </AppShell>
   );
