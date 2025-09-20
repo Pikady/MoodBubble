@@ -8,7 +8,7 @@ import CharacterBubble from '@/components/mascot/CharacterBubble';
 import PaperEntry from '@/components/ui/PaperEntry';
 import TopBar from '@/components/layout/TopBar';
 import { MessageSquare, Plus, LogOut, User } from 'lucide-react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 import { toast } from 'sonner';
 
 interface User {
@@ -20,45 +20,36 @@ interface User {
 export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 初始化Supabase客户端
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-    if (supabaseUrl && supabaseAnonKey) {
-      const client = createClient(supabaseUrl, supabaseAnonKey);
-      setSupabase(client);
-      checkUserSession(client);
-    }
+    checkUserSession();
   }, []);
 
-  const checkUserSession = async (client: SupabaseClient) => {
+  const checkUserSession = async () => {
     try {
-      const { data: { session }, error } = await client.auth.getSession();
+      console.log("开始检查用户会话...");
+      const supabase = createClient();
 
-      if (error || !session) {
+      // 使用getUser获取当前用户信息
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      console.log("用户信息获取结果:", { user, error: userError });
+
+      if (userError || !user) {
+        console.log("用户未登录，跳转到登录页");
         // 用户未登录，跳转到登录页
         router.push('/');
         return;
       }
 
-      const { data: userData, error: userError } = await client
-        .from('users')
-        .select('id, email, created_at')
-        .eq('id', session.user.id)
-        .single();
+      console.log("用户已登录，设置用户状态:", { userId: user.id, email: user.email });
 
-      if (userError && userError.code !== 'PGRST116') {
-        console.error("获取用户信息失败:", userError);
-      }
-
+      // 直接使用Supabase用户信息，不需要额外的users表
       setUser({
-        id: session.user.id,
-        email: session.user.email || '',
-        createdAt: userData?.created_at || new Date().toISOString(),
+        id: user.id,
+        email: user.email || '',
+        createdAt: user.created_at || new Date().toISOString(),
       });
     } catch (error) {
       console.error("检查用户会话失败:", error);
@@ -70,9 +61,8 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     try {
-      if (supabase) {
-        await supabase.auth.signOut();
-      }
+      const supabase = createClient();
+      await supabase.auth.signOut();
       toast.success("已成功登出");
       router.push('/');
     } catch (error) {

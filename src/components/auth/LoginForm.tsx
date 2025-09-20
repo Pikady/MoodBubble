@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
 interface LoginFormProps {
   title?: string;
@@ -33,14 +33,7 @@ export default function LoginForm({
     setIsLoading(true);
 
     try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      if (!supabaseUrl || !supabaseAnonKey) {
-        throw new Error("Supabase配置缺失");
-      }
-
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const supabase = createClient();
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -53,30 +46,7 @@ export default function LoginForm({
 
       if (data.user) {
         toast.success("登录成功！");
-
-        // 检查用户是否存在于users表中
-        const { data: existingUser, error: checkError } = await supabase
-          .from('users')
-          .select('id')
-          .eq('id', data.user.id)
-          .single();
-
-        if (checkError && checkError.code === 'PGRST116') {
-          // 用户不存在，创建新用户记录
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert([
-              {
-                id: data.user.id,
-                email: data.user.email,
-                created_at: new Date().toISOString(),
-              }
-            ]);
-
-          if (insertError) {
-            console.error("创建用户记录失败:", insertError);
-          }
-        }
+        console.log("登录成功，用户信息:", data.user);
 
         // 延迟跳转，让用户看到成功提示
         setTimeout(() => {
