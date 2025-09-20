@@ -42,7 +42,7 @@ export default function AppShell({
       {topBar || defaultTopBar}
 
       {/* 主要内容区域 */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto  overflow-x-visible">
         {children}
       </main>
 

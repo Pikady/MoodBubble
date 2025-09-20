@@ -1,41 +1,21 @@
 import { NoteType } from './types';
 
+// lib/noteConfig.ts
 export const NOTE_CONFIG: Record<NoteType, {
   label: string;
-  color: string;     // 文本/强调色（如 'text-violet-700'）
-  cardBg: string;    // 卡片底色（如 'bg-violet-100'）
-  prompt: string;    // 写纸条页顶部引导文案
-  order: number;     // 分组排序
+  prompt?: string;
+  cardBg: string;   // Tailwind/自定义色
+  color: string;    // 标题颜色类
+  icon: React.ReactNode;
+  tiltDeg?: number;
+  order: number;
 }> = {
-  goodnight: {
-    label: '晚安纸条',
-    color: 'text-violet-700',
-    cardBg: 'bg-violet-100',
-    prompt: '今天过得怎么样？写点晚安心事吧~',
-    order: 2
-  },
-  gratitude: {
-    label: '感恩纸条',
-    color: 'text-green-700',
-    cardBg: 'bg-green-100',
-    prompt: '记录你今天觉得开心/感恩的小瞬间！',
-    order: 1
-  },
-  reflection: {
-    label: '思考纸条',
-    color: 'text-amber-700',
-    cardBg: 'bg-amber-100',
-    prompt: '今天有什么想法/反思？留给未来的你~',
-    order: 3
-  },
-  emotion: {
-    label: '情绪纸条',
-    color: 'text-sky-700',
-    cardBg: 'bg-sky-100',
-    prompt: '你现在的感觉是什么？写下来会轻松些~',
-    order: 4
-  }
+  goodnight:  { label: "晚安纸条",  prompt: "...", cardBg: "bg-[#CFC6FF]", color: "text-[#4B4B7A]", icon: "🌙", tiltDeg: -2 , order: 1},
+  gratitude:  { label: "感恩纸条",  prompt: "...", cardBg: "bg-[#D6F1C9]", color: "text-[#3F6B3E]", icon: "🙏", tiltDeg: 2 , order: 2},
+  emotion:    { label: "情绪纸条",  prompt: "...", cardBg: "bg-[#C8F0FF]", color: "text-[#2E6B78]", icon: "💭", tiltDeg: -2 , order: 3},
+  reflection: { label: "思考纸条",  prompt: "...", cardBg: "bg-[#FFF0B3]", color: "text-[#856400]", icon: "🤔", tiltDeg: 2 , order: 4},
 };
+
 
 export const NOTE_TYPES: NoteType[] = Object.keys(NOTE_CONFIG) as NoteType[];
 

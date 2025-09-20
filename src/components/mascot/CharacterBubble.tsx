@@ -139,16 +139,6 @@ export default function CharacterBubble({
             transformOrigin: "top left"
           }}
         >
-          <img
-            alt=""
-            className="block max-w-none w-full h-full"
-            src={imgEnviornment}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "contain"
-            }}
-          />
         </div>
 
         {/* Main watching bubble */}
