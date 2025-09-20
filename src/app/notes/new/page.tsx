@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 
 import AppShell from '@/components/layout/AppShell';
 import TopBar from '@/components/layout/TopBar';
-
+import { Button } from '@/components/ui/button';
 import CharacterBubble from '@/components/mascot/CharacterBubble';
+import { Plus, ArrowLeft, FileText } from 'lucide-react';
 // app/notes/new/page.tsx
 
 import PaperCollection from "@/components/ui/PaperCollection"; // 你已经写好的纸条盒组件
@@ -27,10 +28,15 @@ export default function NewNotePage() {
   return (
     <AppShell
       topBar={
-        <TopBar
-          showBack
-          onBack={() => router.back()}
-        />
+        <div className='flex justify-between'>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => { router.push('/home') }}
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        </div>
       }
     >
 

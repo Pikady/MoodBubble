@@ -75,16 +75,11 @@ function ClipBoxContent() {
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => { }}
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
         </div>
       }>
-      <NoteBoxList noteboxes={groupedNotes}></NoteBoxList>
+      <div className="h-full">
+        <NoteBoxList noteboxes={groupedNotes}></NoteBoxList>
+      </div>
     </AppShell>
   )
 }
