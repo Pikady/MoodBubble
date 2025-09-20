@@ -1,9 +1,5 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-import { Button } from '@/components/ui/button';
-import AppShell from '@/components/layout/AppShell';
 import TopBar from '@/components/layout/TopBar';
 import { Card, CardContent } from '@/components/ui/card';
 import { NOTE_CONFIG, getNotesByTypeOrder } from '@/lib/noteConfig';
@@ -106,13 +102,13 @@ function NotesContent() {
         )}
       </div>
     </AppShell>
-  );
+  )
 }
 
 export default function NotesPage() {
   return (
     <Suspense fallback={<div>加载中...</div>}>
-      <NotesContent />
+      <ClipBoxContent />
     </Suspense>
   );
 }
