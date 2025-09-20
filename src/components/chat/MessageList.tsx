@@ -33,13 +33,13 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
                 className={[
                   "relative px-4 py-3 text-[15px] leading-6 rounded-3xl shadow-lg",
                   m.role === "user"
-                    ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-br-none"
-                    : "bg-white/90 supports-[backdrop-filter]:backdrop-blur-md border border-white/20 rounded-bl-none shadow-xl",
+                    ? "bg-white text-black rounded-br-none"
+                    : "bg-black text-white rounded-bl-none",
                 ].join(" ")}
                 style={{
                   boxShadow: m.role === "user"
-                    ? "0 4px 20px rgba(59,130,246,0.3)"
-                    : "0 4px 20px rgba(0,0,0,0.1)",
+                    ? "0 4px 20px rgba(92, 95, 95, 0.3)"
+                    : "0 4px 20px rgba(201, 194, 194, 0.73)",
                 }}
               >
                 {m.content}
@@ -47,43 +47,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
             </div>
           </motion.div>
         ))}
-        {/* 加载动画 */}
-        {isLoading && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex justify-start"
-          >
-            <div className="flex items-end gap-3 max-w-[60%]">
-              <motion.div
-                className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 flex items-center justify-center shadow-lg"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-              >
-                {/* Loading animation */}
-              </motion.div>
-              <div className="bg-white/90 supports-[backdrop-filter]:backdrop-blur-md border border-white/20 rounded-3xl rounded-bl-none px-4 py-3 shadow-xl">
-                <div className="flex items-center gap-2">
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-gradient-to-br from-blue-400 to-purple-400"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.8, repeat: Infinity }}
-                  />
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-gradient-to-br from-blue-400 to-purple-400"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.8, repeat: Infinity, delay: 0.2 }}
-                  />
-                  <motion.div
-                    className="w-2 h-2 rounded-full bg-gradient-to-br from-blue-400 to-purple-400"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 0.8, repeat: Infinity, delay: 0.4 }}
-                  />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
+
+
       </motion.div>
     </div>
   );

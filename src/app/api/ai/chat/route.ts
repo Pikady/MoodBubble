@@ -33,24 +33,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 存储用户消息
-    try {
-      await createChatMessage({
-        role: 'user',
-        message: userMessage.content,
-        sessionId
-      });
-    } catch (error) {
-      console.error('存储用户消息失败:', error);
-      // 继续处理，不中断聊天流程
-    }
-
     // 构建AI请求消息
     const aiMessages = [
       noteType ? getSystemPrompt() : getSystemPrompt(),
       ...messages.slice(0, -1), // 历史消息
       userMessage // 用户当前消息
     ];
+
+    // 并行处理：同时保存用户消息和准备AI请求
+    const saveUserMessagePromise = createChatMessage({
+      role: 'user',
+      message: userMessage.content,
+      sessionId
+    }).catch(error => {
+      console.error('存储用户消息失败:', error);
+      // 不抛出错误，避免中断AI响应
+    });
 
     // 检查是否需要流式响应
     const acceptHeader = request.headers.get('accept');
@@ -65,13 +63,6 @@ export async function POST(request: NextRequest) {
             let aiResponse = '';
             let startTime = Date.now();
 
-            // 创建AI回复的占位记录
-            const aiMessageRecord = await createChatMessage({
-              role: 'assistant',
-              message: '', // 初始为空，后续更新
-              sessionId
-            });
-
             // 流式生成回复
             for await (const chunk of streamDeepSeekAI({ messages: aiMessages })) {
               aiResponse += chunk;
@@ -79,24 +70,29 @@ export async function POST(request: NextRequest) {
               controller.enqueue(encoder.encode(data));
             }
 
-            // 更新AI回复记录
+            // AI回复完成后，创建完整的记录
             try {
-              const chatSupabase = await createServerSupabaseClient();
-              await chatSupabase
-                .from('chat')
-                .update({
-                  message: aiResponse,
-                  updated_at: new Date().toISOString()
-                })
-                .eq('id', aiMessageRecord.id);
-            } catch (updateError) {
-              console.error('更新AI回复失败:', updateError);
+              await createChatMessage({
+                role: 'assistant',
+                message: aiResponse,
+                sessionId
+              });
+            } catch (saveError) {
+              console.error('保存AI回复失败:', saveError);
             }
 
             // 发送完成信号
             const latency = Date.now() - startTime;
             const doneData = `data: ${JSON.stringify({ done: true, latency })}\n\n`;
             controller.enqueue(encoder.encode(doneData));
+
+            // 等待用户消息保存完成（如果还在进行中）
+            try {
+              await saveUserMessagePromise;
+            } catch (error) {
+              console.error('用户消息保存最终失败:', error);
+            }
+
             controller.close();
           } catch (error) {
             console.error('流式生成失败:', error);
@@ -117,7 +113,13 @@ export async function POST(request: NextRequest) {
     } else {
       // 普通响应
       const startTime = Date.now();
-      const aiResponse = await callDeepSeekAI({ messages: aiMessages });
+
+      // 并行处理：同时调用AI和等待用户消息保存
+      const [aiResponse] = await Promise.all([
+        callDeepSeekAI({ messages: aiMessages }),
+        saveUserMessagePromise // 等待用户消息保存完成
+      ]);
+
       const latency = Date.now() - startTime;
 
       // 存储AI回复
