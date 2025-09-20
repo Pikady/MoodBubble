@@ -10,9 +10,7 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <AppShell
-      showPaperEntry={true}
-    >
+    <AppShell>
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
         {/* CharacterBubble with idle mood and thoughts */}
         <div className="mb-8">
