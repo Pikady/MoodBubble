@@ -2,24 +2,34 @@
 
 import useSWR from 'swr';
 import { Note, NoteType } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 /**
- * 获取用户笔记的hook
+ * 获取用户笔记的hook - 安全地按用户隔离数据
  */
 export function useNotes(type?: NoteType) {
 
   const fetchNotes = async (): Promise<Note[]> => {
-    if (!supabase) {
-      throw new Error('Supabase 客户端未初始化');
+    const supabase = createClient();
+
+    // 获取当前用户
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.log('用户未登录，返回空数组');
+      return [];
     }
+
+    console.log('获取用户笔记:', { userId: user.id, type });
 
     const { data, error } = await supabase
       .from('notes')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
+      console.error('获取笔记失败:', error);
       throw error;
     }
 
@@ -27,6 +37,7 @@ export function useNotes(type?: NoteType) {
       return data?.filter(note => note.type === type) || [];
     }
 
+    console.log('成功获取笔记:', data?.length || 0);
     return data || [];
   };
 
@@ -42,19 +53,32 @@ export function useNotes(type?: NoteType) {
 
   // 创建笔记
   const createNote = async (params: { type: NoteType; content: string }) => {
-    if (!supabase) {
-      throw new Error('Supabase 客户端未初始化');
+    const supabase = createClient();
+
+    // 获取当前用户
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      throw new Error('用户未登录');
     }
+
+    console.log('创建笔记:', { userId: user.id, ...params });
 
     const { data, error } = await supabase
       .from('notes')
-      .insert([params])
+      .insert([{
+        ...params,
+        user_id: user.id
+      }])
       .select()
       .single();
 
     if (error) {
+      console.error('创建笔记失败:', error);
       throw error;
     }
+
+    console.log('笔记创建成功:', data);
 
     // 更新本地缓存
     mutate();
@@ -64,20 +88,29 @@ export function useNotes(type?: NoteType) {
 
   // 更新笔记
   const updateNote = async (noteId: string, content: string) => {
-    if (!supabase) {
-      throw new Error('Supabase 客户端未初始化');
+    const supabase = createClient();
+
+    // 获取当前用户
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      throw new Error('用户未登录');
     }
 
     const { data, error } = await supabase
       .from('notes')
       .update({ content, updated_at: new Date().toISOString() })
       .eq('id', noteId)
+      .eq('user_id', user.id) // 确保只能更新自己的笔记
       .select()
       .single();
 
     if (error) {
+      console.error('更新笔记失败:', error);
       throw error;
     }
+
+    console.log('笔记更新成功:', data);
 
     // 更新本地缓存
     mutate();
@@ -87,18 +120,27 @@ export function useNotes(type?: NoteType) {
 
   // 删除笔记
   const deleteNote = async (noteId: string) => {
-    if (!supabase) {
-      throw new Error('Supabase 客户端未初始化');
+    const supabase = createClient();
+
+    // 获取当前用户
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      throw new Error('用户未登录');
     }
 
     const { error } = await supabase
       .from('notes')
       .delete()
-      .eq('id', noteId);
+      .eq('id', noteId)
+      .eq('user_id', user.id); // 确保只能删除自己的笔记
 
     if (error) {
+      console.error('删除笔记失败:', error);
       throw error;
     }
+
+    console.log('笔记删除成功:', noteId);
 
     // 更新本地缓存
     mutate();

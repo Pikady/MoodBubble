@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 import { ChatMessage } from '@/lib/types';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 
 /**
- * 聊天功能hook
+ * 聊天功能hook - 安全地按用户隔离数据
  */
 export function useChat(sessionId?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -15,13 +15,23 @@ export function useChat(sessionId?: string) {
   // 获取聊天历史
   const fetchChatHistory = async () => {
     try {
-      if (!supabase) {
-        throw new Error('Supabase 客户端未初始化');
+      const supabase = createClient();
+
+      // 获取当前用户
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.log('用户未登录，返回空聊天历史');
+        setMessages([]);
+        return;
       }
+
+      console.log('获取用户聊天历史:', { userId: user.id, sessionId });
 
       let query = supabase
         .from('chat')
         .select('*')
+        .eq('user_id', user.id) // 只获取当前用户的聊天记录
         .order('created_at', { ascending: true });
 
       if (sessionId) {
@@ -34,6 +44,7 @@ export function useChat(sessionId?: string) {
         throw error;
       }
 
+      console.log('成功获取聊天历史:', data?.length || 0);
       setMessages(data || []);
     } catch (error) {
       console.error('获取聊天历史失败:', error);
@@ -151,13 +162,21 @@ export function useChat(sessionId?: string) {
   // 清空聊天记录
   const clearChat = async () => {
     try {
-      if (!supabase) {
-        throw new Error('Supabase 客户端未初始化');
+      const supabase = createClient();
+
+      // 获取当前用户
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        throw new Error('用户未登录');
       }
+
+      console.log('清空用户聊天记录:', { userId: user.id, sessionId });
 
       let query = supabase
         .from('chat')
-        .delete();
+        .delete()
+        .eq('user_id', user.id); // 只删除当前用户的聊天记录
 
       if (sessionId) {
         query = query.eq('session_id', sessionId);
@@ -169,6 +188,7 @@ export function useChat(sessionId?: string) {
         throw error;
       }
 
+      console.log('聊天记录清空成功');
       setMessages([]);
     } catch (error) {
       console.error('清空聊天记录失败:', error);
