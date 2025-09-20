@@ -1,7 +1,15 @@
 # 登录页面设置指南
 
 ## 🚧 当前问题
-由于Supabase配置问题，登录页面暂时无法正常显示。需要进行以下设置：
+由于Supabase配置问题，部分登录页面暂时无法正常显示。需要进行以下设置：
+
+## 🔄 新的路由结构
+
+- **首页** (`/`) - 登录页面
+- **主页** (`/home`) - 原来的首页内容，需要登录后访问
+- **登录页面** (`/auth/login`) - 专门的登录页面
+- **演示登录** (`/auth/demo`) - 演示用登录页面
+- **简化登录** (`/auth/simple`) - 不依赖复杂组件的登录页面
 
 ## 🔧 解决方案
 
@@ -54,20 +62,25 @@ WITH CHECK (auth.uid() = id);
 - 加载状态显示
 - 错误处理和Toast提示
 - 类型安全的TypeScript实现
+- 登录成功后跳转到 `/home` 页面
+- 主页包含登出功能
 
 ## 📁 文件结构
 
 ```
 src/
 ├── app/
+│   ├── page.tsx                    # 首页（登录页面）
+│   ├── home/page.tsx               # 主页（原来首页内容）
 │   ├── auth/
 │   │   ├── login/page.tsx          # 登录页面
 │   │   ├── demo/page.tsx           # 演示登录页面
 │   │   ├── simple/page.tsx         # 简化登录页面
 │   │   └── actions/auth.ts         # 登录Server Actions
 │   └── api/
-│       └── auth/
-│           └── login/route.ts       # 登录API路由
+│       ├── auth/
+│       │   └── login/route.ts       # 登录API路由
+│       └── health/route.ts         # 健康检查API
 ├── components/
 │   ├── ui/
 │   │   ├── input.tsx               # 输入组件
@@ -80,16 +93,26 @@ src/
 
 ## 🔄 测试方法
 
-### 方法1：使用演示页面
+### 方法1：使用首页登录
+1. 启动开发服务器：`pnpm dev`
+2. 访问：`http://localhost:3000`（首页已改为登录页面）
+3. 输入任意邮箱和密码
+4. 点击"登录"按钮，成功后会跳转到 `/home`
+
+### 方法2：使用演示页面
 1. 启动开发服务器：`pnpm dev`
 2. 访问：`http://localhost:3000/auth/simple`
 3. 输入任意邮箱和密码
 4. 点击"登录"按钮
 
-### 方法2：配置Supabase后使用真实登录
+### 方法3：配置Supabase后使用真实登录
 1. 按照上述步骤配置Supabase
 2. 访问：`http://localhost:3000/auth/login`
 3. 使用真实账号登录
+
+### 方法4：直接访问主页
+1. 访问：`http://localhost:3000/home`
+2. 点击右上角登出按钮返回登录页
 
 ## 📝 注意事项
 

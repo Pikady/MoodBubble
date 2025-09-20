@@ -22,7 +22,7 @@ export default function SimpleLoginPage() {
       if (email && password) {
         toast.success("登录功能演示成功！");
         setTimeout(() => {
-          router.push("/");
+          router.push("/home");
         }, 1000);
       } else {
         throw new Error("请输入邮箱和密码");
@@ -106,7 +106,7 @@ export default function SimpleLoginPage() {
                 onClick={() => router.push("/")}
                 className="text-blue-600 hover:underline font-medium"
               >
-                返回首页
+                返回登录页
               </button>
             </p>
           </div>

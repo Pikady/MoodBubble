@@ -25,7 +25,7 @@ export default function DemoLoginPage() {
 
       // 模拟跳转到主页
       setTimeout(() => {
-        router.push("/");
+        router.push("/home");
       }, 1000);
     } catch (error) {
       console.error("登录错误:", error);

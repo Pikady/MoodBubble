@@ -1,53 +1,132 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import AppShell from '@/components/layout/AppShell';
-import CharacterBubble from '@/components/mascot/CharacterBubble';
-import PaperEntry from '@/components/ui/PaperEntry';
-import TopBar from '@/components/layout/TopBar';
-import { MessageSquare, Plus } from 'lucide-react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "sonner";
+import AppShell from "@/components/layout/AppShell";
+// import CharacterBubble from "@/components/mascot/CharacterBubble";
 
 export default function Home() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // 简化的登录逻辑 - 这里只是演示
+      if (email && password) {
+        toast.success("登录成功！");
+        setTimeout(() => {
+          router.push("/home");
+        }, 1000);
+      } else {
+        throw new Error("请输入邮箱和密码");
+      }
+    } catch (error) {
+      console.error("登录错误:", error);
+      toast.error(error instanceof Error ? error.message : "登录失败");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <AppShell
-      topBar={
-        <TopBar
-          showLeft={false}
-          rightContent={<PaperEntry />}
-        />
-      }
+      showPaperEntry={false}
+      className="bg-gradient-to-b from-blue-50 to-white"
     >
-      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
-        {/* CharacterBubble with idle mood and thoughts */}
-        <div className="mb-8">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-8">
+        {/* 角色形象 */}
+        {/* <div className="mb-8">
           <CharacterBubble
-            size={240}
+            size={200}
             mood="idle"
-            showThoughts={true}
+            showThoughts={false}
           />
-        </div>
-
-        {/* 思维泡泡 */}
-        {/* <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 mb-8 max-w-xs text-center shadow-sm">
-          <p className="text-gray-600 text-sm">
-            你好！我是你的情绪小伙伴~ 💭
-          </p>
         </div> */}
 
-        {/* 输入框 */}
-        <div className="w-full max-w-md mobile:absolute mobile:bottom-8 mobile:left-1/2 mobile:transform mobile:-translate-x-1/2" style={{ position: 'relative', top: '200px' }}>
-          <Button
-            variant="outline"
-            className="w-80 h-11 text-left justify-start text-gray-500 ml-5" // 添加ml-auto让按钮向右移动
-            onClick={() => router.push('/chat')}
-          >
-            <MessageSquare className="h-4 w-4 mr-2" />
-            泡泡我跟你说...
-          </Button>
-        </div>
+        {/* 登录卡片 */}
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">
+              欢迎来到情绪泡泡
+            </CardTitle>
+            <CardDescription>
+              登录你的账号开始记录心情
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                  邮箱
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="请输入邮箱"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="h-11"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                  密码
+                </label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="请输入密码"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="h-11"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-11"
+                disabled={isLoading}
+              >
+                {isLoading ? "登录中..." : "登录"}
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-600">
+                还没有账号？{" "}
+                <button
+                  onClick={() => router.push("/auth/register")}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  立即注册
+                </button>
+              </p>
+            </div>
+
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                <button
+                  onClick={() => router.push("/auth/simple")}
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  演示登录
+                </button>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </AppShell>
   );
