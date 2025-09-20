@@ -5,15 +5,18 @@ export const NOTE_CONFIG: Record<NoteType, {
   label: string;
   prompt?: string;
   cardBg: string;   // Tailwind/自定义色
+  labelBg?: string;
+  boxDefaultH?: string; // NoteBox默认高度
+  boxExpandH?: string;  // NoteBox展开高度
   color: string;    // 标题颜色类
   icon: React.ReactNode;
   tiltDeg?: number;
   order: number;
 }> = {
-  goodnight:  { label: "晚安纸条",  prompt: "...", cardBg: "bg-[#CFC6FF]", color: "text-[#4B4B7A]", icon: "🌙", tiltDeg: -2 , order: 1},
-  gratitude:  { label: "感恩纸条",  prompt: "...", cardBg: "bg-[#D6F1C9]", color: "text-[#3F6B3E]", icon: "🙏", tiltDeg: 2 , order: 2},
-  emotion:    { label: "情绪纸条",  prompt: "...", cardBg: "bg-[#C8F0FF]", color: "text-[#2E6B78]", icon: "💭", tiltDeg: -2 , order: 3},
-  reflection: { label: "思考纸条",  prompt: "...", cardBg: "bg-[#FFF0B3]", color: "text-[#856400]", icon: "🤔", tiltDeg: 2 , order: 4},
+  gratitude:  { label: "感恩纸条",  prompt: "...", cardBg: "bg-[#E8F5DE]", labelBg: "bg-[#D2ECBF]", color: "text-[#3F6B3E]", boxDefaultH: '100%', boxExpandH: '100%', icon: "🙏", tiltDeg: 2 , order: 2},
+  goodnight:  { label: "晚安纸条",  prompt: "...", cardBg: "bg-[#D0D5EF]", labelBg: "bg-[#B9B6FF]", color: "text-[#4B4B7A]", boxDefaultH: '300px', boxExpandH: 'calc(100%-60px)', icon: "🌙", tiltDeg: -2 , order: 1},
+  reflection: { label: "思考纸条",  prompt: "...", cardBg: "bg-[#F0ECD8]", labelBg: "bg-[#FFF9B6]", color: "text-[#856400]", boxDefaultH: '240px', boxExpandH: 'calc(100%-120px)', icon: "🤔", tiltDeg: 2 , order: 4},
+  emotion:    { label: "情绪纸条",  prompt: "...", cardBg: "bg-[#DBF5EB]", labelBg: "bg-[#B8EFFB]", color: "text-[#2E6B78]", boxDefaultH: '180px', boxExpandH: 'calc(100%-180px)', icon: "💭", tiltDeg: -2 , order: 3},
 };
 
 
