@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function GET() {
   try {
     // 检查Supabase连接
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase.from('users').select('count', { count: 'exact', head: true });
 
     if (error) {

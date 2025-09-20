@@ -41,4 +41,4 @@ export async function createServerSupabaseClient() {
 }
 
 // 服务端Supabase客户端（用于Server Actions）
-export const supabaseServer = createServerSupabaseClient();
+// 注意：不能在模块顶层直接调用，需要在每个Server Action中单独创建

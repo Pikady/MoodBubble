@@ -17,14 +17,24 @@ export default function WriteNotePage() {
   const [content, setContent] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!content.trim() || isLoading) return;
     setIsLoading(true);
-    // TODO: 调用你的保存逻辑
-    setTimeout(() => {
+
+    try {
+      const { createNote } = await import('@/app/actions/notes');
+      const result = await createNote({
+        type,
+        content: content.trim()
+      });
+
       setIsLoading(false);
-      router.push("/notes");
-    }, 600);
+      router.push(`/notes?highlight=${result.id}`);
+    } catch (error) {
+      console.error('保存笔记失败:', error);
+      setIsLoading(false);
+      // 可以添加错误提示
+    }
   };
 
   return (

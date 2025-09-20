@@ -1,6 +1,6 @@
 'use server';
 
-import { supabaseServer } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 import { Note, NoteType, CreateNoteParams, CreateNoteResult } from '@/lib/types';
 
 /**
@@ -8,7 +8,7 @@ import { Note, NoteType, CreateNoteParams, CreateNoteResult } from '@/lib/types'
  */
 export async function createNote(params: CreateNoteParams): Promise<CreateNoteResult> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -44,7 +44,7 @@ export async function createNote(params: CreateNoteParams): Promise<CreateNoteRe
  */
 export async function getUserNotes(): Promise<Note[]> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -73,7 +73,7 @@ export async function getUserNotes(): Promise<Note[]> {
  */
 export async function getNotesByType(type: NoteType): Promise<Note[]> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -103,7 +103,7 @@ export async function getNotesByType(type: NoteType): Promise<Note[]> {
  */
 export async function deleteNote(noteId: string): Promise<void> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -130,7 +130,7 @@ export async function deleteNote(noteId: string): Promise<void> {
  */
 export async function updateNote(noteId: string, content: string): Promise<Note> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -170,7 +170,7 @@ export async function updateNoteAIReply(
   }
 ): Promise<Note> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -211,7 +211,7 @@ export async function updateNoteAIReply(
  */
 export async function getNoteById(noteId: string): Promise<Note | null> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

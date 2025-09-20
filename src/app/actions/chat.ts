@@ -1,6 +1,6 @@
 'use server';
 
-import { supabaseServer } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 import { ChatMessage } from '@/lib/types';
 
 /**
@@ -12,7 +12,7 @@ export async function createChatMessage(params: {
   sessionId?: string;
 }): Promise<ChatMessage> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -46,7 +46,7 @@ export async function createChatMessage(params: {
  */
 export async function getUserChatMessages(sessionId?: string): Promise<ChatMessage[]> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -80,7 +80,7 @@ export async function getUserChatMessages(sessionId?: string): Promise<ChatMessa
  */
 export async function getRecentChatHistory(limit: number = 10): Promise<ChatMessage[]> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -110,7 +110,7 @@ export async function getRecentChatHistory(limit: number = 10): Promise<ChatMess
  */
 export async function deleteChatMessage(messageId: string): Promise<void> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
@@ -137,7 +137,7 @@ export async function deleteChatMessage(messageId: string): Promise<void> {
  */
 export async function clearUserChatHistory(sessionId?: string): Promise<void> {
   try {
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

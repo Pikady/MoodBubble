@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseServer } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 使用Supabase进行邮箱密码登录
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,

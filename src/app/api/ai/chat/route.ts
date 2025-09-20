@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createChatMessage } from '@/app/actions/chat';
 import { callDeepSeekAI, streamDeepSeekAI, getSystemPrompt } from '@/lib/services/ai';
-import { supabaseServer } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 获取当前用户
-    const supabase = await supabaseServer;
+    const supabase = await createServerSupabaseClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
 
             // 更新AI回复记录
             try {
-              const chatSupabase = await supabaseServer;
+              const chatSupabase = await createServerSupabaseClient();
               await chatSupabase
                 .from('chat')
                 .update({
