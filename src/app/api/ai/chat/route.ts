@@ -1,72 +1,152 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aiChat, AIChatOptions } from '@/lib/ai';
-import { createClient } from '@/lib/supabase/server';
-
-export const runtime = 'edge';
+import { createChatMessage } from '@/app/actions/chat';
+import { callDeepSeekAI, streamDeepSeekAI, getSystemPrompt } from '@/lib/services/ai';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
-    // 验证用户身份
-    const supabase = await createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { messages, sessionId, noteType } = await request.json();
 
-    if (error || !user) {
-      return NextResponse.json({ error: '未授权访问' }, { status: 401 });
+    if (!messages || !Array.isArray(messages)) {
+      return NextResponse.json(
+        { error: '无效的消息格式' },
+        { status: 400 }
+      );
     }
 
-    // 解析请求体
-    const body = await request.json();
-    const { messages, model, temperature, maxTokens } = body as AIChatOptions;
-
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return NextResponse.json({ error: '无效的消息格式' }, { status: 400 });
+    // 获取当前用户
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: '用户未登录' },
+        { status: 401 }
+      );
     }
 
-    // 验证消息格式
-    const isValidMessage = messages.every(msg =>
-      msg && typeof msg === 'object' &&
-      ['system', 'user', 'assistant'].includes(msg.role) &&
-      typeof msg.content === 'string'
-    );
-
-    if (!isValidMessage) {
-      return NextResponse.json({ error: '消息格式不正确' }, { status: 400 });
+    // 获取用户消息（最后一条）
+    const userMessage = messages[messages.length - 1];
+    if (!userMessage || userMessage.role !== 'user') {
+      return NextResponse.json(
+        { error: '无效的用户消息' },
+        { status: 400 }
+      );
     }
 
-    // 调用AI服务
-    const reply = await aiChat({
-      messages,
-      model: model || 'gpt-4o-mini',
-      temperature: temperature || 0.7,
-      maxTokens: maxTokens || 1000
-    });
+    // 存储用户消息
+    try {
+      await createChatMessage({
+        role: 'user',
+        message: userMessage.content,
+        sessionId
+      });
+    } catch (error) {
+      console.error('存储用户消息失败:', error);
+      // 继续处理，不中断聊天流程
+    }
 
-    // 返回流式响应
-    const stream = new ReadableStream({
-      start(controller) {
-        const encoder = new TextEncoder();
+    // 构建AI请求消息
+    const aiMessages = [
+      noteType ? getSystemPrompt() : getSystemPrompt(),
+      ...messages.slice(0, -1), // 历史消息
+      userMessage // 用户当前消息
+    ];
 
-        // 发送回复内容
-        const chunk = encoder.encode(reply);
-        controller.enqueue(chunk);
+    // 检查是否需要流式响应
+    const acceptHeader = request.headers.get('accept');
+    const wantsStream = acceptHeader?.includes('text/event-stream');
 
-        // 结束流
-        controller.close();
+    if (wantsStream) {
+      // 流式响应
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        async start(controller) {
+          try {
+            let aiResponse = '';
+            let startTime = Date.now();
+
+            // 创建AI回复的占位记录
+            const aiMessageRecord = await createChatMessage({
+              role: 'assistant',
+              message: '', // 初始为空，后续更新
+              sessionId
+            });
+
+            // 流式生成回复
+            for await (const chunk of streamDeepSeekAI({ messages: aiMessages })) {
+              aiResponse += chunk;
+              const data = `data: ${JSON.stringify({ content: chunk })}\n\n`;
+              controller.enqueue(encoder.encode(data));
+            }
+
+            // 更新AI回复记录
+            try {
+              await (await supabaseServer)
+                .from('chat')
+                .update({
+                  message: aiResponse,
+                  updated_at: new Date().toISOString()
+                })
+                .eq('id', aiMessageRecord.id);
+            } catch (updateError) {
+              console.error('更新AI回复失败:', updateError);
+            }
+
+            // 发送完成信号
+            const latency = Date.now() - startTime;
+            const doneData = `data: ${JSON.stringify({ done: true, latency })}\n\n`;
+            controller.enqueue(encoder.encode(doneData));
+            controller.close();
+          } catch (error) {
+            console.error('流式生成失败:', error);
+            const errorData = `data: ${JSON.stringify({ error: 'AI服务暂时不可用，请稍后重试' })}\n\n`;
+            controller.enqueue(encoder.encode(errorData));
+            controller.close();
+          }
+        }
+      });
+
+      return new NextResponse(stream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    } else {
+      // 普通响应
+      const startTime = Date.now();
+      const aiResponse = await callDeepSeekAI({ messages: aiMessages });
+      const latency = Date.now() - startTime;
+
+      // 存储AI回复
+      try {
+        await createChatMessage({
+          role: 'assistant',
+          message: aiResponse,
+          sessionId
+        });
+      } catch (error) {
+        console.error('存储AI回复失败:', error);
+        // 继续返回响应，不中断聊天流程
       }
-    });
 
-    return new NextResponse(stream, {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache',
-      },
-    });
-
+      return NextResponse.json({
+        content: aiResponse,
+        latency
+      });
+    }
   } catch (error) {
-    console.error('AI聊天API错误:', error);
+    console.error('聊天API错误:', error);
     return NextResponse.json(
       { error: '服务器内部错误' },
       { status: 500 }
     );
   }
+}
+
+export async function GET() {
+  return NextResponse.json({
+    message: 'AI聊天API运行正常',
+    timestamp: new Date().toISOString()
+  });
 }

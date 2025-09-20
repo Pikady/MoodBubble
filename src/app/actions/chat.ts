@@ -1,173 +1,160 @@
 'use server';
 
-import { createServiceClient } from '@/lib/supabase/server';
-import { AIChatMessage } from '@/lib/ai';
+import { supabaseServer } from '@/lib/supabase';
+import { ChatMessage } from '@/lib/types';
 
-export interface CreateChatSessionParams {
-  title?: string;
-}
-
-export interface CreateChatMessageParams {
-  session_id: string;
+/**
+ * 创建聊天消息
+ */
+export async function createChatMessage(params: {
   role: 'user' | 'assistant';
-  content: string;
-}
-
-export async function createChatSession(params?: CreateChatSessionParams) {
-  const supabase = await createServiceClient();
-
+  message: string;
+  sessionId?: string;
+}): Promise<ChatMessage> {
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
 
-    if (userError || !user) {
+    if (!user) {
       throw new Error('用户未登录');
     }
 
-    const { data: session, error } = await supabase
-      .from('chat_sessions')
-      .insert({
+    const { data, error } = await (await supabaseServer)
+      .from('chat')
+      .insert([{
         user_id: user.id,
-        title: params?.title || '新对话',
-      })
-      .select('id')
+        role: params.role,
+        message: params.message,
+        session_id: params.sessionId || null
+      }])
+      .select()
       .single();
-
-    if (error || !session) {
-      console.error('创建会话失败:', error);
-      throw new Error('创建会话失败');
-    }
-
-    return session.id as string;
-
-  } catch (error) {
-    console.error('创建聊天会话时出错:', error);
-    throw error;
-  }
-}
-
-export async function createChatMessage(params: CreateChatMessageParams) {
-  const { session_id, role, content } = params;
-
-  if (!session_id || !role || !content?.trim()) {
-    throw new Error('参数不能为空');
-  }
-
-  const supabase = await createServiceClient();
-
-  try {
-    // 验证会话所有权
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      throw new Error('用户未登录');
-    }
-
-    const { data: session, error: sessionError } = await supabase
-      .from('chat_sessions')
-      .select('id')
-      .eq('id', session_id)
-      .eq('user_id', user.id)
-      .single();
-
-    if (sessionError || !session) {
-      throw new Error('会话不存在或无权限');
-    }
-
-    // 创建消息
-    const { data: message, error: messageError } = await supabase
-      .from('chat_messages')
-      .insert({
-        session_id,
-        role,
-        content: content.trim(),
-      })
-      .select('id')
-      .single();
-
-    if (messageError || !message) {
-      console.error('创建消息失败:', messageError);
-      throw new Error('创建消息失败');
-    }
-
-    return message.id as string;
-
-  } catch (error) {
-    console.error('创建聊天消息时出错:', error);
-    throw error;
-  }
-}
-
-export async function getChatMessages(sessionId: string) {
-  if (!sessionId) {
-    throw new Error('会话ID不能为空');
-  }
-
-  const supabase = await createServiceClient();
-
-  try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      throw new Error('用户未登录');
-    }
-
-    // 验证会话所有权
-    const { data: session, error: sessionError } = await supabase
-      .from('chat_sessions')
-      .select('id')
-      .eq('id', sessionId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (sessionError || !session) {
-      throw new Error('会话不存在或无权限');
-    }
-
-    // 获取消息
-    const { data: messages, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: true });
 
     if (error) {
-      console.error('获取消息失败:', error);
-      throw new Error('获取消息失败');
+      throw error;
     }
 
-    return messages || [];
-
+    return data;
   } catch (error) {
-    console.error('获取聊天消息时出错:', error);
-    throw error;
+    console.error('创建聊天消息失败:', error);
+    throw new Error('创建聊天消息失败');
   }
 }
 
-export async function getUserChatSessions() {
-  const supabase = await createServiceClient();
-
+/**
+ * 获取用户的所有聊天消息
+ */
+export async function getUserChatMessages(sessionId?: string): Promise<ChatMessage[]> {
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
 
-    if (userError || !user) {
+    if (!user) {
+      return [];
+    }
+
+    let query = (await supabaseServer)
+      .from('chat')
+      .select('*')
+      .eq('user_id', user.id);
+
+    if (sessionId) {
+      query = query.eq('session_id', sessionId);
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: true });
+
+    if (error) {
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('获取聊天消息失败:', error);
+    throw new Error('获取聊天消息失败');
+  }
+}
+
+/**
+ * 获取最近的聊天历史（用于上下文）
+ */
+export async function getRecentChatHistory(limit: number = 10): Promise<ChatMessage[]> {
+  try {
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
+
+    if (!user) {
+      return [];
+    }
+
+    const { data, error } = await (await supabaseServer)
+      .from('chat')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      throw error;
+    }
+
+    return (data || []).reverse();
+  } catch (error) {
+    console.error('获取聊天历史失败:', error);
+    throw new Error('获取聊天历史失败');
+  }
+}
+
+/**
+ * 删除聊天消息
+ */
+export async function deleteChatMessage(messageId: string): Promise<void> {
+  try {
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
+
+    if (!user) {
       throw new Error('用户未登录');
     }
 
-    const { data: sessions, error } = await supabase
-      .from('chat_sessions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('updated_at', { ascending: false });
+    const { error } = await (await supabaseServer)
+      .from('chat')
+      .delete()
+      .eq('id', messageId)
+      .eq('user_id', user.id);
 
     if (error) {
-      console.error('获取会话列表失败:', error);
-      throw new Error('获取会话列表失败');
+      throw error;
+    }
+  } catch (error) {
+    console.error('删除聊天消息失败:', error);
+    throw new Error('删除聊天消息失败');
+  }
+}
+
+/**
+ * 清空用户的聊天记录
+ */
+export async function clearUserChatHistory(sessionId?: string): Promise<void> {
+  try {
+    const { data: { user } } = await (await supabaseServer).auth.getUser();
+
+    if (!user) {
+      throw new Error('用户未登录');
     }
 
-    return sessions || [];
+    let query = (await supabaseServer)
+      .from('chat')
+      .delete()
+      .eq('user_id', user.id);
 
+    if (sessionId) {
+      query = query.eq('session_id', sessionId);
+    }
+
+    const { error } = await query;
+
+    if (error) {
+      throw error;
+    }
   } catch (error) {
-    console.error('获取用户会话列表时出错:', error);
-    throw error;
+    console.error('清空聊天记录失败:', error);
+    throw new Error('清空聊天记录失败');
   }
 }
