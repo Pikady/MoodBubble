@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Folder } from 'lucide-react';
+import { ClipboardMinus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PaperCollectionProps {
@@ -10,6 +10,7 @@ interface PaperCollectionProps {
 
 export default function PaperCollection({ className, onClick }: PaperCollectionProps) {
   const router = useRouter();
+  const iconNotebox = "/images/mascot/notebox-icon.svg";
 
   const handleClick = () => {
     if (onClick) {
@@ -32,11 +33,8 @@ export default function PaperCollection({ className, onClick }: PaperCollectionP
         className
       )}
     >
-      {/* Folder 图标 */}
-      <Folder
-        className="w-[14px] h-[14px] text-white mr-[6px]"
-        strokeWidth={2}
-      />
+
+      <img className="w-[20px] h-[20px] text-white mr-[8px]" src={iconNotebox} alt="" />
 
       {/* 文字 */}
       <span className="text-white text-[14px] font-normal leading-normal whitespace-nowrap">

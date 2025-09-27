@@ -10,10 +10,11 @@ export default function NoteTypeList() {
   ];
 
   return (
-    <div className="mt-4 space-y-3">
-      {items.map((it) => (
+    <div className="mt-4 space-y-3 relative">
+      {items.map((it, index) => (
         <NoteTypeCard
           key={it.type}
+          index={index}
           type={it.type}
           title={it.title}
           href={it.href}

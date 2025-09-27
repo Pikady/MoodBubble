@@ -4,14 +4,15 @@ import Link from "next/link";
 import { NOTE_CONFIG } from "@/lib/noteConfig";
 import { NoteType } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { Moon, Smile } from "lucide-react";
 
 interface NoteTypeCardProps {
   type: NoteType;
+  index: number;      // 当前卡片序号
   title?: string;
   href?: string;
   onClick?: () => void;
   className?: string;
-
   ribbonBg?: string;   // 覆盖 NOTE_CONFIG.cardBg
   tiltDeg?: number;    // 外层旋转角（内层会反向）
   offsetY?: number;    // 微小上下错位
@@ -28,6 +29,7 @@ interface NoteTypeCardProps {
 
 export default function NoteTypeCard({
   type,
+  index,
   title,
   href,
   onClick,
@@ -43,19 +45,42 @@ export default function NoteTypeCard({
   const cfg = NOTE_CONFIG[type];
   const displayTitle = title ?? cfg.label;
   const bg = ribbonBg ?? cfg.cardBg;
-  const angle = typeof tiltDeg === "number" ? tiltDeg : (cfg.tiltDeg ?? -4);
+  const iconEmotion = "/images/mascot/emotion-label-icon.svg";
+  const iconThought = "/images/mascot/thought-label-icon.svg";
+  const posClassConfig = [
+    {
+      left: "left-[30px]",
+      top: "top-[20px]",
+      icon: <Moon></Moon>,
+    },
+    {
+      left: "left-[60px]",
+      top: "top-[100px]",
+      icon: <Smile></Smile>,
+    },
+    {
+      left: "left-[20px]",
+      top: "top-[200px]",
+      icon: <img src={iconEmotion} alt="" />,
+    },
+    {
+      left: "left-[100px]",
+      top: "top-[290px]",
+      icon: <img src={iconThought} alt="" />,
+    },
+  ];
+  const boxRotate = -5;
 
   const inner = (
     <div
       className={cn(
-        "ribbon-inner rounded-3xl px-6 py-5 shadow-sm active:shadow",
-        "transition-transform active:scale-[0.99] select-none",
+        "rounded-3xl px-6 py-5 shadow-sm active:shadow h-[100%]",
+        "active:scale-[0.99] select-none flex",
         bg
       )}
-      style={{ transform: `rotate(${-angle}deg)` }}
     >
       <div className="flex items-center gap-4">
-          <span className="text-2xl leading-none">{icon ?? cfg.icon}</span>
+        <span className="text-2xl leading-none">{posClassConfig[index].icon ?? icon ?? cfg.icon}</span>
         <div className="flex-1">
           <div className={cn("text-base font-semibold tracking-wide", cfg.color)}>
             {displayTitle}
@@ -70,17 +95,12 @@ export default function NoteTypeCard({
       data-type={type}
       aria-disabled={disabled || undefined}
       className={cn(
-        "ribbon-outer block overflow-visible", // 关键：允许溢出！
+        "overflow-visible h-[100%]", // 关键：允许溢出！
         disabled && "pointer-events-none opacity-50",
-        className
       )}
       style={{
         // 让色条“变宽并向左右溢出”：父容器 paddingX=bleedPx，就往外各扩 bleedPx
-        width: `calc(100% + ${bleedPx * 2}px)`,
-        marginLeft: `-${bleedPx}px`,
         marginRight: `-${bleedPx}px`,
-        transform: `translateY(${offsetY}px) rotate(${angle}deg)`,
-        transformOrigin: "center",
       }}
       onClick={onClick}
     >
@@ -94,7 +114,10 @@ export default function NoteTypeCard({
         href={href}
         aria-label={a11y["aria-label"] ?? `选择${displayTitle}`}
         onClick={onClick}
-        className="block overflow-visible" // 关键：外层 link 也别裁剪
+        className={cn("block overflow-visible rotate-[-5deg] w-[100%] absolute h-[90px] transition-transform duration-300 ease-in-out hover:translate-x-[-10px] hover:translate-y-[2px]",
+          posClassConfig[index].left,
+          posClassConfig[index].top,
+        )} // 关键：外层 link 也别裁剪
       >
         {body}
       </Link>
