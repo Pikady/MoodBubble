@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { Folder } from 'lucide-react';
+import { ClipboardMinus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PaperCollectionProps {
@@ -32,11 +32,8 @@ export default function PaperCollection({ className, onClick }: PaperCollectionP
         className
       )}
     >
-      {/* Folder 图标 */}
-      <Folder
-        className="w-[14px] h-[14px] text-white mr-[6px]"
-        strokeWidth={2}
-      />
+
+      <ClipboardMinus className="w-[24px] h-[24px] text-white mr-[6px]"></ClipboardMinus>
 
       {/* 文字 */}
       <span className="text-white text-[14px] font-normal leading-normal whitespace-nowrap">

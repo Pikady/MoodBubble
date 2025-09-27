@@ -22,6 +22,7 @@ export default function NewNotePage() {
     { type: "emotion",    title: "情绪纸条",  href: "/notes/new/emotion",    ribbonBg: "bg-[#C8F0FF]", tiltDeg: -4, offsetY: 6 },
     { type: "thought", title: "思考纸条",  href: "/notes/new/thought", ribbonBg: "bg-[#FFF0B3]", tiltDeg:  3, offsetY: 8 },
   ];
+  const imgNoteLabelBack = "/images/mascot/note-background-line.svg";
 
   
 
@@ -41,7 +42,7 @@ export default function NewNotePage() {
     >
 
       {/* 吉祥物占位 */}
-      <div className="px-4 pt-0 pb-4" style={{ position: 'relative', top: '-25px' }}>
+      <div className="px-4 pt-0 pb-4 ml-4" style={{ position: 'relative', top: '-25px' }}>
         <div className="flex justify-left mb-6">
           <CharacterBubble
             mood="watching"
@@ -55,18 +56,22 @@ export default function NewNotePage() {
       <div className="flex items-center justify-between px-4 mt-20 mb-0">
         <div className="text-[15px]">
           你想写什么类型的
-          <mark className="bg-[#D6F1C9] rounded px-1 mx-0.5">纸条</mark>
-          ？
+          <span className="inline-block relative">
+            <span className="relative z-[1400]">纸条？</span>
+            <img className="absolute top-0 z-[1399]" src={imgNoteLabelBack} alt="" />
+          </span>
+          
         </div>
         <PaperCollection /> {/* 右侧纸条盒 */}
       </div>
 
       {/* 丝带列表：父容器要允许溢出；bleedPx=16 对齐上面的 px-4 */}
       <div className="px-4 pb-8 overflow-visible">
-        <div className="mt-4 space-y-3 overflow-visible">
-          {items.map((it) => (
+        <div className="mt-4 space-y-3 overflow-visible relative">
+          {items.map((it, index) => (
             <NoteTypeCard
               key={it.type}
+              index={index}
               type={it.type}
               title={it.title}
               href={it.href}
