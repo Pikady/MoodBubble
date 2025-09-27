@@ -45,6 +45,8 @@ export default function NoteTypeCard({
   const cfg = NOTE_CONFIG[type];
   const displayTitle = title ?? cfg.label;
   const bg = ribbonBg ?? cfg.cardBg;
+  const iconEmotion = "/images/mascot/emotion-label-icon.svg";
+  const iconThought = "/images/mascot/thought-label-icon.svg";
   const posClassConfig = [
     {
       left: "left-[30px]",
@@ -59,12 +61,12 @@ export default function NoteTypeCard({
     {
       left: "left-[20px]",
       top: "top-[200px]",
-      icon: <Moon></Moon>,
+      icon: <img src={iconEmotion} alt="" />,
     },
     {
       left: "left-[100px]",
       top: "top-[290px]",
-      icon: <Moon></Moon>,
+      icon: <img src={iconThought} alt="" />,
     },
   ];
   const boxRotate = -5;
@@ -78,7 +80,7 @@ export default function NoteTypeCard({
       )}
     >
       <div className="flex items-center gap-4">
-        <span className="text-2xl leading-none">{icon ?? cfg.icon}</span>
+        <span className="text-2xl leading-none">{posClassConfig[index].icon ?? icon ?? cfg.icon}</span>
         <div className="flex-1">
           <div className={cn("text-base font-semibold tracking-wide", cfg.color)}>
             {displayTitle}

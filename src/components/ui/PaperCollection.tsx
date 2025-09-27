@@ -10,6 +10,7 @@ interface PaperCollectionProps {
 
 export default function PaperCollection({ className, onClick }: PaperCollectionProps) {
   const router = useRouter();
+  const iconNotebox = "/images/mascot/notebox-icon.svg";
 
   const handleClick = () => {
     if (onClick) {
@@ -33,7 +34,7 @@ export default function PaperCollection({ className, onClick }: PaperCollectionP
       )}
     >
 
-      <ClipboardMinus className="w-[24px] h-[24px] text-white mr-[6px]"></ClipboardMinus>
+      <img className="w-[20px] h-[20px] text-white mr-[8px]" src={iconNotebox} alt="" />
 
       {/* 文字 */}
       <span className="text-white text-[14px] font-normal leading-normal whitespace-nowrap">
