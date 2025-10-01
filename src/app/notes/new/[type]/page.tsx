@@ -41,7 +41,7 @@ export default function WriteNotePage() {
     <AppShell title={`写${cfg.label}`} showBack onBack={() => router.back()}>
 
       {/* 吉祥物占位 */}
-      <div className="px-4 pt-0 pb-4" style={{ position: 'relative', top: '-25px' }}>
+      <div className="px-4 pt-0 pb-4 ml-[20px]" style={{ position: 'relative', top: '-25px' }}>
         <div className="flex justify-left mb-6">
           <CharacterBubble
             mood="watching"
@@ -53,11 +53,12 @@ export default function WriteNotePage() {
 
 
 
-      <div className="p-4 space-y-6" style={{ position: 'relative', top: '100px' }}> 
+      <div className="px-4 space-y-6" style={{ position: 'relative', top: '100px' }}> 
 
         <div>
           <TiltedNoteInput
             label={cfg.label}
+            type={type}
             placeholder={cfg.prompt || "今天过得怎么样？让我更了解你一些吧～"}
             value={content}
             onChange={setContent}
