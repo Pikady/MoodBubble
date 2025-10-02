@@ -7,6 +7,7 @@ import TiltedNoteInput from "@/components/notes/TiltedNoteInput";
 import { NOTE_CONFIG } from "@/lib/noteConfig";
 import { NoteType } from "@/lib/types";
 import CharacterBubble from '@/components/mascot/CharacterBubble';
+import NoteLoading from "@/app/notes/loading/page";
 
 export default function WriteNotePage() {
   const router = useRouter();
@@ -28,8 +29,6 @@ export default function WriteNotePage() {
         content: content.trim()
       });
 
-      setIsLoading(false);
-      router.push(`/notes?highlight=${result.id}`);
     } catch (error) {
       console.error('保存笔记失败:', error);
       setIsLoading(false);
@@ -37,7 +36,9 @@ export default function WriteNotePage() {
     }
   };
 
-  return (
+  return isLoading ? (
+    <NoteLoading></NoteLoading>
+  ) : (
     <AppShell title={`写${cfg.label}`} showBack onBack={() => router.back()}>
 
       {/* 吉祥物占位 */}
