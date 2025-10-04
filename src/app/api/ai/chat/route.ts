@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createChatMessage, ChatActionContext } from '@/app/actions/chat';
 import { callDeepSeekAI, streamDeepSeekAI, getSystemPrompt } from '@/lib/services/ai';
 import { createServerSupabaseClient } from '@/lib/supabase';
+import { getSupabaseUserFromRequest } from '@/lib/auth/user';
+import { SupabaseJWTError } from '@/lib/auth/jwt';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,10 +16,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 获取当前用户
     const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    let user;
+
+    try {
+      user = await getSupabaseUserFromRequest(request, { supabase });
+    } catch (error) {
+      if (error instanceof SupabaseJWTError && !error.recoverable) {
+        console.error('[chat] Authentication failed (non-recoverable JWT error)', { message: error.message });
+        return NextResponse.json(
+          { error: '登录状态已失效，请重新登录' },
+          { status: 401 }
+        );
+      }
+
+      console.error('[chat] Authentication threw unexpected error', { error });
+      throw error;
+    }
+
     if (!user) {
+      console.warn('[chat] No authenticated user detected');
       return NextResponse.json(
         { error: '用户未登录' },
         { status: 401 }
@@ -26,8 +44,10 @@ export async function POST(request: NextRequest) {
 
     const chatActionContext: ChatActionContext = {
       supabase,
-      userId: user.id
+      userId: user.id,
     };
+
+    console.log('[chat] Auth resolved, proceeding with request', { userId: user.id });
 
     // 获取用户消息（最后一条）
     const userMessage = messages[messages.length - 1];
@@ -45,14 +65,15 @@ export async function POST(request: NextRequest) {
       userMessage // 用户当前消息
     ];
 
+    console.log('[chat] Prepared AI request messages', { messageCount: aiMessages.length });
+
     // 并行处理：同时保存用户消息和准备AI请求
     const saveUserMessagePromise = createChatMessage({
       role: 'user',
       message: userMessage.content,
       sessionId
     }, chatActionContext).catch(error => {
-      console.error('存储用户消息失败:', error);
-      // 不抛出错误，避免中断AI响应
+      console.error('[chat] Failed to persist user message', { error });
     });
 
     // 检查是否需要流式响应
@@ -60,13 +81,14 @@ export async function POST(request: NextRequest) {
     const wantsStream = acceptHeader?.includes('text/event-stream');
 
     if (wantsStream) {
+      console.log('[chat] Using streaming response');
       // 流式响应
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
         async start(controller) {
           try {
             let aiResponse = '';
-            let startTime = Date.now();
+            const startTime = Date.now();
 
             // 流式生成回复
             for await (const chunk of streamDeepSeekAI({ messages: aiMessages })) {
@@ -74,6 +96,8 @@ export async function POST(request: NextRequest) {
               const data = `data: ${JSON.stringify({ content: chunk })}\n\n`;
               controller.enqueue(encoder.encode(data));
             }
+
+            console.log('[chat] Completed streaming AI response', { length: aiResponse.length });
 
             // AI回复完成后，创建完整的记录
             try {
@@ -83,7 +107,7 @@ export async function POST(request: NextRequest) {
                 sessionId
               }, chatActionContext);
             } catch (saveError) {
-              console.error('保存AI回复失败:', saveError);
+              console.error('[chat] Failed to persist AI message (stream)', { saveError });
             }
 
             // 发送完成信号
@@ -95,12 +119,12 @@ export async function POST(request: NextRequest) {
             try {
               await saveUserMessagePromise;
             } catch (error) {
-              console.error('用户消息保存最终失败:', error);
+              console.error('[chat] User message persistence rejected after stream', { error });
             }
 
             controller.close();
           } catch (error) {
-            console.error('流式生成失败:', error);
+            console.error('[chat] Streaming generation failed', { error });
             const errorData = `data: ${JSON.stringify({ error: 'AI服务暂时不可用，请稍后重试' })}\n\n`;
             controller.enqueue(encoder.encode(errorData));
             controller.close();
@@ -116,6 +140,7 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
+      console.log('[chat] Using JSON response');
       // 普通响应
       const startTime = Date.now();
 
@@ -126,6 +151,7 @@ export async function POST(request: NextRequest) {
       ]);
 
       const latency = Date.now() - startTime;
+      console.log('[chat] Received AI response', { length: aiResponse.length, latency });
 
       // 存储AI回复
       try {
@@ -135,7 +161,7 @@ export async function POST(request: NextRequest) {
           sessionId
         }, chatActionContext);
       } catch (error) {
-        console.error('存储AI回复失败:', error);
+        console.error('[chat] Failed to persist AI message (json)', { error });
         // 继续返回响应，不中断聊天流程
       }
 
@@ -145,7 +171,7 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error('聊天API错误:', error);
+    console.error('[chat] Unexpected API error', { error });
     return NextResponse.json(
       { error: '服务器内部错误' },
       { status: 500 }
