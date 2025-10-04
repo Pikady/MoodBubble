@@ -3,26 +3,73 @@
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { ChatMessage } from '@/lib/types';
 
-/**
- * 创建聊天消息
- */
-export async function createChatMessage(params: {
-  role: 'user' | 'assistant';
-  message: string;
-  sessionId?: string;
-}): Promise<ChatMessage> {
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+type ServerSupabaseClient = Awaited<ReturnType<typeof createServerSupabaseClient>>;
 
+export interface ChatActionContext {
+  supabase?: ServerSupabaseClient;
+  userId?: string;
+}
+
+async function resolveContext(
+  context: ChatActionContext | undefined,
+  requireUser: true
+): Promise<{ supabase: ServerSupabaseClient; userId: string }>;
+async function resolveContext(
+  context?: ChatActionContext,
+  requireUser?: boolean
+): Promise<{ supabase: ServerSupabaseClient; userId?: string }>;
+async function resolveContext(
+  context?: ChatActionContext,
+  requireUser: boolean = false
+): Promise<{ supabase: ServerSupabaseClient; userId?: string }> {
+  if (context?.supabase) {
+    if (context.userId) {
+      return { supabase: context.supabase, userId: context.userId };
+    }
+
+    const { data: { user } } = await context.supabase.auth.getUser();
+
+    if (requireUser) {
+      if (!user) {
+        throw new Error('用户未登录');
+      }
+      return { supabase: context.supabase, userId: user.id };
+    }
+
+    return { supabase: context.supabase, userId: user?.id };
+  }
+
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (requireUser) {
     if (!user) {
       throw new Error('用户未登录');
     }
+    return { supabase, userId: user.id };
+  }
+
+  return { supabase, userId: user?.id };
+}
+
+/**
+ * 创建聊天消息
+ */
+export async function createChatMessage(
+  params: {
+    role: 'user' | 'assistant';
+    message: string;
+    sessionId?: string;
+  },
+  context?: ChatActionContext
+): Promise<ChatMessage> {
+  try {
+    const { supabase, userId } = await resolveContext(context, true);
 
     const { data, error } = await supabase
       .from('chat')
       .insert([{
-        user_id: user.id,
+        user_id: userId,
         role: params.role,
         message: params.message,
         session_id: params.sessionId || null
@@ -44,19 +91,21 @@ export async function createChatMessage(params: {
 /**
  * 获取用户的所有聊天消息
  */
-export async function getUserChatMessages(sessionId?: string): Promise<ChatMessage[]> {
+export async function getUserChatMessages(
+  sessionId?: string,
+  context?: ChatActionContext
+): Promise<ChatMessage[]> {
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { supabase, userId } = await resolveContext(context);
 
-    if (!user) {
+    if (!userId) {
       return [];
     }
 
     let query = supabase
       .from('chat')
       .select('*')
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (sessionId) {
       query = query.eq('session_id', sessionId);
@@ -78,19 +127,21 @@ export async function getUserChatMessages(sessionId?: string): Promise<ChatMessa
 /**
  * 获取最近的聊天历史（用于上下文）
  */
-export async function getRecentChatHistory(limit: number = 10): Promise<ChatMessage[]> {
+export async function getRecentChatHistory(
+  limit: number = 10,
+  context?: ChatActionContext
+): Promise<ChatMessage[]> {
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { supabase, userId } = await resolveContext(context);
 
-    if (!user) {
+    if (!userId) {
       return [];
     }
 
     const { data, error } = await supabase
       .from('chat')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(limit);
 
@@ -108,20 +159,18 @@ export async function getRecentChatHistory(limit: number = 10): Promise<ChatMess
 /**
  * 删除聊天消息
  */
-export async function deleteChatMessage(messageId: string): Promise<void> {
+export async function deleteChatMessage(
+  messageId: string,
+  context?: ChatActionContext
+): Promise<void> {
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error('用户未登录');
-    }
+    const { supabase, userId } = await resolveContext(context, true);
 
     const { error } = await supabase
       .from('chat')
       .delete()
       .eq('id', messageId)
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (error) {
       throw error;
@@ -135,19 +184,17 @@ export async function deleteChatMessage(messageId: string): Promise<void> {
 /**
  * 清空用户的聊天记录
  */
-export async function clearUserChatHistory(sessionId?: string): Promise<void> {
+export async function clearUserChatHistory(
+  sessionId?: string,
+  context?: ChatActionContext
+): Promise<void> {
   try {
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error('用户未登录');
-    }
+    const { supabase, userId } = await resolveContext(context, true);
 
     let query = supabase
       .from('chat')
       .delete()
-      .eq('user_id', user.id);
+      .eq('user_id', userId);
 
     if (sessionId) {
       query = query.eq('session_id', sessionId);

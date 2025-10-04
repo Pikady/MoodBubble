@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createChatMessage } from '@/app/actions/chat';
+import { createChatMessage, ChatActionContext } from '@/app/actions/chat';
 import { callDeepSeekAI, streamDeepSeekAI, getSystemPrompt } from '@/lib/services/ai';
 import { createServerSupabaseClient } from '@/lib/supabase';
 
@@ -24,6 +24,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const chatActionContext: ChatActionContext = {
+      supabase,
+      userId: user.id
+    };
+
     // 获取用户消息（最后一条）
     const userMessage = messages[messages.length - 1];
     if (!userMessage || userMessage.role !== 'user') {
@@ -45,7 +50,7 @@ export async function POST(request: NextRequest) {
       role: 'user',
       message: userMessage.content,
       sessionId
-    }).catch(error => {
+    }, chatActionContext).catch(error => {
       console.error('存储用户消息失败:', error);
       // 不抛出错误，避免中断AI响应
     });
@@ -76,7 +81,7 @@ export async function POST(request: NextRequest) {
                 role: 'assistant',
                 message: aiResponse,
                 sessionId
-              });
+              }, chatActionContext);
             } catch (saveError) {
               console.error('保存AI回复失败:', saveError);
             }
@@ -128,7 +133,7 @@ export async function POST(request: NextRequest) {
           role: 'assistant',
           message: aiResponse,
           sessionId
-        });
+        }, chatActionContext);
       } catch (error) {
         console.error('存储AI回复失败:', error);
         // 继续返回响应，不中断聊天流程
