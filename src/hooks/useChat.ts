@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChatMessage } from '@/lib/types';
 import { createClient } from '@/lib/supabase/client';
 
@@ -11,9 +11,9 @@ export function useChat(sessionId?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 获取聊天历史
-  const fetchChatHistory = async () => {
+  const fetchChatHistory = useCallback(async () => {
     try {
       const supabase = createClient();
 
@@ -46,14 +46,35 @@ export function useChat(sessionId?: string) {
 
       console.log('成功获取聊天历史:', data?.length || 0);
       setMessages(data || []);
-    } catch (error) {
-      console.error('获取聊天历史失败:', error);
+    } catch (fetchError) {
+      console.error('获取聊天历史失败:', fetchError);
       setError('获取聊天历史失败');
     }
-  };
+  }, [sessionId]);
+
+  const scheduleHistoryRefresh = useCallback(() => {
+    if (refreshTimerRef.current) {
+      clearTimeout(refreshTimerRef.current);
+    }
+
+    refreshTimerRef.current = setTimeout(() => {
+      fetchChatHistory().catch(err => {
+        console.warn('后台刷新聊天历史失败:', err);
+      });
+    }, 300);
+  }, [fetchChatHistory]);
+
+  useEffect(() => {
+    return () => {
+      if (refreshTimerRef.current) {
+        clearTimeout(refreshTimerRef.current);
+        refreshTimerRef.current = null;
+      }
+    };
+  }, []);
 
   // 发送消息
-  const sendMessage = async (content: string, onStream?: (chunk: string) => void) => {
+  const sendMessage = useCallback(async (content: string, onStream?: (chunk: string) => void) => {
     setIsLoading(true);
     setError(null);
 
@@ -127,7 +148,7 @@ export function useChat(sessionId?: string) {
               if (parsed.error) {
                 throw new Error(parsed.error);
               }
-            } catch (e) {
+            } catch (parseError) {
               // 忽略解析错误
             }
           }
@@ -148,19 +169,19 @@ export function useChat(sessionId?: string) {
         setMessages(prev => [...prev, aiMessageObj]);
       }
 
-      // 重新获取完整的聊天历史以确保数据同步
-      await fetchChatHistory();
+      // 异步刷新聊天历史（防抖，避免阻塞 UI）
+      scheduleHistoryRefresh();
 
-    } catch (error) {
-      console.error('发送消息失败:', error);
-      setError(error instanceof Error ? error.message : '发送消息失败');
+    } catch (sendError) {
+      console.error('发送消息失败:', sendError);
+      setError(sendError instanceof Error ? sendError.message : '发送消息失败');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [messages, scheduleHistoryRefresh, sessionId]);
 
   // 清空聊天记录
-  const clearChat = async () => {
+  const clearChat = useCallback(async () => {
     try {
       const supabase = createClient();
 
@@ -190,11 +211,11 @@ export function useChat(sessionId?: string) {
 
       console.log('聊天记录清空成功');
       setMessages([]);
-    } catch (error) {
-      console.error('清空聊天记录失败:', error);
+    } catch (clearError) {
+      console.error('清空聊天记录失败:', clearError);
       setError('清空聊天记录失败');
     }
-  };
+  }, [sessionId]);
 
   return {
     messages,
