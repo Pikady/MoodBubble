@@ -15,7 +15,7 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
   return (
-    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-[140px] space-y-6">
+    <div className="flex-1 overflow-y-auto px-4 pt-6 pb-[10px] space-y-6">
       <motion.div className="space-y-6">
         {messages.map((m, index) => (
           <motion.div
