@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import AudioLines from "@/components/audiolines/AudioLines";
 
 interface InputFieldProps {
   input: string;
@@ -24,16 +25,13 @@ const InputField: React.FC<InputFieldProps> = ({
   canSend,
 }) => {
   const [inputFocused, setInputFocused] = useState(false);
+  const iconSendChat = "/images/chat/send_chat.svg";
 
   return (
     <div
-        className="fixed bottom-0 left-0 right-0 mobile:absolute mobile:inset-x-0 mobile:bottom-0 px-3 pb-3 pt-2 z-50"
+        className="fixed bottom-0 left-0 right-0 mobile:absolute mobile:inset-x-0 mobile:bottom-6 px-3 pb-3 pt-2 z-50"
         style={{
             paddingBottom: "calc(env(safe-area-inset-bottom) + 12px)",
-            backdropFilter: "saturate(180%) blur(14px)",
-            WebkitBackdropFilter: "saturate(180%) blur(14px)",
-            background: "rgba(250,250,252,0.75)",
-            borderTop: "1px solid rgba(0,0,0,0.06)",
         }}
     >
       <div className="mx-auto flex w-full max-w-[680px] items-center gap-3">
@@ -67,6 +65,8 @@ const InputField: React.FC<InputFieldProps> = ({
             {isRecording ? <Square className="h-4 w-4" /> : <Mic className="h-5 w-5" />}
           </motion.div>
         </Button>
+
+        {/* <Demo></Demo> */}
 
         {/* 文本输入框 */}
         <motion.div
@@ -104,14 +104,14 @@ const InputField: React.FC<InputFieldProps> = ({
           className={[
             "h-12 w-12 rounded-full shadow-lg transition-all duration-300",
             canSend
-              ? "bg-gradient-to-br from-blue-500 to-purple-500 text-white shadow-blue-200 hover:shadow-xl"
+              ? "bg-black hover:shadow-xl"
               : "bg-gradient-to-br from-gray-200 to-gray-300 text-gray-400",
           ].join(" ")}
           aria-label="发送"
         >
           <motion.div
             animate={canSend ? { x: [0, 2, 0] } : {}}
-            transition={{ duration: 0.3, repeat: canSend ? Infinity : 0 }}
+            transition={{ duration: 0.3, repeat: canSend ? 1 : 0 }}
           >
             <Send className="h-5 w-5" />
           </motion.div>

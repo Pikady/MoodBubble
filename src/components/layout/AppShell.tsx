@@ -60,7 +60,7 @@ export default function AppShell({
         {topBar || defaultTopBar}
 
         {/* 主要内容区域 */}
-        <main className="relative flex-1 overflow-y-auto overflow-x-hidden">
+        <main className="relative flex-1 overflow-y-hidden overflow-x-hidden">
           {children}
         </main>
 

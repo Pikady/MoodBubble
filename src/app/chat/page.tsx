@@ -27,6 +27,8 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const imageBubbleChatCenter = "/images/chat/bubble_chat_center.svg";
+
   const canSend = input.trim().length > 0 && !isLoading;
 
   const handleSend = async () => {
@@ -147,21 +149,27 @@ export default function ChatPage() {
 
   return (
     <AppShell title="和泡泡聊天" showBack onBack={() => router.back()}>
-      <div className="p-4 space-y-4 flex flex-col h-full">
+      <div className="relative p-4 space-y-4 flex flex-col h-full">
         {/* 消息列表 */}
         <div className="flex-1 overflow-y-auto">
           <MessageList messages={messages} isLoading={isLoading} />
         </div>
-        {/* 输入框 */}
-        <InputField
-          input={input}
-          setInput={setInput}
-          handleSend={handleSend}
-          isRecording={false}
-          startVoice={() => {}}
-          stopVoice={() => {}}
-          canSend={canSend}
-        />
+      </div>
+
+      {/* 输入框 */}
+      <InputField
+        input={input}
+        setInput={setInput}
+        handleSend={handleSend}
+        isRecording={false}
+        startVoice={() => { }}
+        stopVoice={() => { }}
+        canSend={canSend}
+      />
+
+      {/* 泡泡 */}
+      <div className="absolute bottom-0 w-[100%]">
+        <img src={imageBubbleChatCenter} className="w-[100%] mx-[auto]" alt="" />
       </div>
     </AppShell>
   );
