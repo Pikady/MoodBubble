@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, Square, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Demo from "@/components/audiolines/Demo";
+import AudioLines from "@/components/audiolines/AudioLines";
 
 interface InputFieldProps {
   input: string;

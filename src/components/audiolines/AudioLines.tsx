@@ -55,18 +55,10 @@ const AudioLinesIcon = ({
   );
 };
 
-// 使用示例
-const Demo = () => {
+const AudioLines = () => {
   return (
-    <div style={{ padding: '20px', background: '#f5f7fa' }}>
-      <h3>录音中动效：</h3>
-      <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span>正在录音</span>
-        {/* 调用图标组件，可自定义参数 */}
-        <AudioLinesIcon size={28} color="#FF4D4F" speed="1s" />
-      </div>
-    </div>
+    <AudioLinesIcon size={28} color="#FF4D4F" speed="1s" />
   );
 };
 
-export default Demo;
+export default AudioLines
