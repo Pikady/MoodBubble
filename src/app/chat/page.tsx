@@ -149,9 +149,9 @@ export default function ChatPage() {
 
   return (
     <AppShell title="和泡泡聊天" showBack onBack={() => router.back()}>
-      <div className="relative p-4 space-y-4 flex flex-col h-full">
+      <div className="relative p-4 space-y-4 flex flex-col max-h-[calc(100vh-200px)]">
         {/* 消息列表 */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto" style={{ zIndex: 1400 }}>
           <MessageList messages={messages} isLoading={isLoading} />
         </div>
       </div>
@@ -168,7 +168,7 @@ export default function ChatPage() {
       />
 
       {/* 泡泡 */}
-      <div className="absolute bottom-0 w-[100%]">
+      <div className="absolute bottom-0 w-[100%] z-0" style={{ "zIndex": 0}}>
         <img src={imageBubbleChatCenter} className="w-[100%] mx-[auto]" alt="" />
       </div>
     </AppShell>
