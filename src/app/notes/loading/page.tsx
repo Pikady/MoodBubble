@@ -34,6 +34,7 @@ export default function NoteLoading() {
   const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
   const [aiResponse, setAIResponse] = useState<string | null>(null);
   const [requestId, setRequestId] = useState<string | null>(null);
+  const [dotsIndex, setDotsIndex] = useState(0);
 
   // 页面切换核心方法 - 确保前一个组件完全淡出后再淡入下一个
   const switchPhase = useCallback((targetPhase: LOADING_PHASE) => {
@@ -149,6 +150,15 @@ export default function NoteLoading() {
     };
   }, [requestId, switchPhase, hasAutoSwitched]);
 
+  // 动态点动画
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDotsIndex((prev) => (prev + 1) % 3);
+    }, 500);
+
+    return () => clearInterval(dotsInterval);
+  }, []);
+
   // 初始加载与自动切换逻辑（仅在无requestId时使用）
   useEffect(() => {
     // 初始淡入效果
@@ -178,6 +188,16 @@ export default function NoteLoading() {
   );
   const bubblePublicClass = "w-[75%] mx-auto transition-all duration-300";
 
+  // 动态加载点组件
+  const LoadingDots = () => {
+    const dots = ['.', '..', '...'];
+    return (
+      <span className='ml-2 text-[24px] font-normal inline-block' style={{ width: '1.5em' }}>
+        {dots[dotsIndex]}
+      </span>
+    );
+  };
+
   // 页面内容定义
   const loadingPage = (
     <div className={pagePublicClass}>
@@ -188,7 +208,7 @@ export default function NoteLoading() {
           <span className='relative z-[1400]'>品尝中</span>
           <img className='absolute top-0 z-[1399] h-[100%]' src={imgNoteLabelBack} alt="文字背景" />
         </div>
-        <img className='ml-2' src={imgLoadingDots} alt="加载中动画" />
+        <LoadingDots />
       </div>
     </div>
   );
