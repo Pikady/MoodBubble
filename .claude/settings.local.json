@@ -10,7 +10,8 @@
       "WebFetch(domain:localhost)",
       "Bash(pnpm dev:*)",
       "Bash(killport:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(pnpm build:*)"
     ],
     "deny": [],
     "ask": []

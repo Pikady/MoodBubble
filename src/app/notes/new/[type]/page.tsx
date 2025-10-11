@@ -7,7 +7,7 @@ import TiltedNoteInput from "@/components/notes/TiltedNoteInput";
 import { NOTE_CONFIG } from "@/lib/noteConfig";
 import { NoteType } from "@/lib/types";
 import CharacterBubble from '@/components/mascot/CharacterBubble';
-import NoteLoading from "@/app/notes/loading/page";
+import { startAIRequest } from "@/lib/aiService";
 
 export default function WriteNotePage() {
   const router = useRouter();
@@ -24,10 +24,16 @@ export default function WriteNotePage() {
 
     try {
       const { createNote } = await import('@/app/actions/notes');
-      const result = await createNote({
+      await createNote({
         type,
         content: content.trim()
       });
+
+      // 启动异步AI调用，获取请求ID
+      const requestId = await startAIRequest(content.trim(), type);
+
+      // 立即导航到loading页面，传递请求ID
+      router.push(`/notes/loading?requestId=${requestId}`);
 
     } catch (error) {
       console.error('保存笔记失败:', error);
@@ -36,9 +42,7 @@ export default function WriteNotePage() {
     }
   };
 
-  return isLoading ? (
-    <NoteLoading></NoteLoading>
-  ) : (
+  return (
     <AppShell title={`写${cfg.label}`} showBack onBack={() => router.back()}>
 
       {/* 吉祥物占位 */}

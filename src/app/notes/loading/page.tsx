@@ -6,6 +6,7 @@ import AppShell from '@/components/layout/AppShell';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Heart } from 'lucide-react';
+import { getAIRequestStatus, cleanupAIRequest } from '@/lib/aiService';
 
 // 页面阶段枚举
 enum LOADING_PHASE {
@@ -31,6 +32,8 @@ export default function NoteLoading() {
   const [isVisible, setIsVisible] = useState(false);
   const [isTransitionLocked, setIsTransitionLocked] = useState(false);
   const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
+  const [aiResponse, setAIResponse] = useState<string | null>(null);
+  const [requestId, setRequestId] = useState<string | null>(null);
 
   // 页面切换核心方法 - 确保前一个组件完全淡出后再淡入下一个
   const switchPhase = useCallback((targetPhase: LOADING_PHASE) => {
@@ -61,16 +64,101 @@ export default function NoteLoading() {
     return () => clearTimeout(fadeOutTimer);
   }, [isTransitionLocked]);
 
-  // 初始加载与自动切换逻辑
+  // 从URL获取requestId
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('requestId');
+      if (id) {
+        setRequestId(id);
+      }
+    }
+  }, []);
+
+  // 轮询检查AI状态
+  useEffect(() => {
+    if (!requestId) return;
+
+    let interval: NodeJS.Timeout;
+    let timeout: NodeJS.Timeout;
+
+    const checkStatus = async () => {
+      try {
+        const status = getAIRequestStatus(requestId);
+
+        if (status) {
+          if (status.status === 'completed' && status.response) {
+            setAIResponse(status.response);
+
+            // 切换到DONE状态
+            if (!hasAutoSwitched) {
+              const switchTimer = setTimeout(() => {
+                switchPhase(LOADING_PHASE.DONE);
+                setHasAutoSwitched(true);
+                // 切换完成后清理数据和停止轮询
+                setTimeout(() => {
+                  cleanupAIRequest(requestId);
+                  clearInterval(interval);
+                  if (timeout) clearTimeout(timeout);
+                }, 1000); // 延迟1秒清理，确保状态切换完成
+              }, 500); // 短暂延迟确保用户体验
+              return () => clearTimeout(switchTimer);
+            }
+          } else if (status.status === 'error') {
+            console.error('AI调用失败:', status.error);
+
+            // 使用默认回复
+            if (!hasAutoSwitched) {
+              const switchTimer = setTimeout(() => {
+                switchPhase(LOADING_PHASE.DONE);
+                setHasAutoSwitched(true);
+                // 切换完成后清理数据和停止轮询
+                setTimeout(() => {
+                  cleanupAIRequest(requestId);
+                  clearInterval(interval);
+                  if (timeout) clearTimeout(timeout);
+                }, 1000);
+              }, 500);
+              return () => clearTimeout(switchTimer);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('检查AI状态失败:', error);
+      }
+    };
+
+    // 立即检查一次
+    checkStatus();
+
+    // 设置轮询
+    interval = setInterval(checkStatus, 500);
+
+    // 超时处理（最多等待30秒）
+    timeout = setTimeout(() => {
+      clearInterval(interval);
+      if (!hasAutoSwitched) {
+        switchPhase(LOADING_PHASE.DONE);
+        setHasAutoSwitched(true);
+      }
+    }, 30000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [requestId, switchPhase, hasAutoSwitched]);
+
+  // 初始加载与自动切换逻辑（仅在无requestId时使用）
   useEffect(() => {
     // 初始淡入效果
     const initialFadeIn = setTimeout(() => {
       setIsVisible(true);
     }, 100); // 微小延迟确保动画触发
 
-    // 自动切换逻辑
+    // 自动切换逻辑（仅在无requestId时使用，保持原有行为）
     let autoSwitchToDone: NodeJS.Timeout;
-    if (!hasAutoSwitched && curLoadingPhase === LOADING_PHASE.LOADING) {
+    if (!requestId && !hasAutoSwitched && curLoadingPhase === LOADING_PHASE.LOADING) {
       autoSwitchToDone = setTimeout(() => {
         switchPhase(LOADING_PHASE.DONE);
         setHasAutoSwitched(true);
@@ -81,7 +169,7 @@ export default function NoteLoading() {
       clearTimeout(initialFadeIn);
       if (autoSwitchToDone) clearTimeout(autoSwitchToDone);
     };
-  }, [switchPhase, curLoadingPhase, hasAutoSwitched]);
+  }, [requestId]); // 只依赖requestId，避免重复执行
 
   // 页面样式 - 统一应用过渡效果
   const pagePublicClass = cn(
@@ -114,7 +202,9 @@ export default function NoteLoading() {
           className='flex rounded-[30px] w-[80%] whitespace-normal h-[70px]'
           onClick={() => switchPhase(LOADING_PHASE.GROW)}
         >
-          <span className='text-[18px]/6 text-left mx-2'>太好啦！！真为你开心，这是你主动迈出的第一步！</span>
+          <span className='text-[18px]/6 text-left mx-2'>
+            {aiResponse || '太好啦！！真为你开心，这是你主动迈出的第一步！'}
+          </span>
         </Button>
       </div>
     </div>
