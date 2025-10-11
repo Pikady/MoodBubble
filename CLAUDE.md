@@ -6,8 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a mobile-first emotional wellness app called "情绪泡泡" (Mood Bubble) that allows users to:
 - Write emotional notes in 4 categories (goodnight, gratitude, emotion, thought)
-- Chat with an AI companion
+- Chat with an AI companion using text or voice input
 - View and manage their notes in a grouped card interface
+- Experience interactive character animations and emotional feedback
 
 ## Development Commands
 
@@ -38,12 +39,28 @@ The app uses a central configuration pattern in `src/lib/noteConfig.ts` that def
 1. Home (`/`) → Chat (`/chat`) via input click (no real focus)
 2. Home右上 button → Note Type Selection (`/notes/new`)
 3. Type card → Note Composition (`/notes/new/[type]`)
-4. Submit → Notes Box (`/notes?highlight={id}`) with highlighted card
+4. Submit → Loading Animation (`/notes/loading`) → Notes Box (`/notes?highlight={id}`) with highlighted card
+
+### Voice & Audio System
+- **Voice Recording**: Press-and-hold voice input with visual feedback
+- **AudioLines Component**: Animated recording indicator with customizable styling
+- **Real-time Feedback**: Visual recording states and animation transitions
+- **Touch-friendly**: Supports both mouse and touch events for mobile
+
+### Animation & Character System
+- **Mascot Animations**: Interactive character responses to user actions
+- **Loading States**: Multi-phase loading animations (chewing → done → grow horn)
+- **Framer Motion**: Smooth transitions and micro-interactions
+- **Emotional Feedback**: Character evolves based on user interactions
 
 ### Component Architecture
 - **AppShell**: Handles safe areas, top navigation, main content area
 - **TopBar**: Back button, title, right action buttons
 - **NoteComposer**: Sticky bottom input with character count and loading states
+- **InputField**: Chat interface with voice recording, text input, and send functionality
+- **MessageList**: Chat message display with bubble styling and animations
+- **AudioLines**: Voice recording animation component with customizable appearance
+- **NoteBox**: Card-based note display with grouping and management features
 - All cards use `rounded-2xl shadow-sm p-4` pattern
 
 ### Data Layer
@@ -100,6 +117,42 @@ export async function createNoteWithAI({ type, content }) {
 ### Color System
 All colors derive from `NOTE_CONFIG[type].color` and `NOTE_CONFIG[type].cardBg`. Never hardcode colors for note-related UI.
 
+### Chat Interface Implementation
+Chat bubbles use distinct styling for user vs assistant messages:
+```tsx
+// User messages (right-aligned, white background)
+className="bg-white text-black rounded-br-none"
+style={{ boxShadow: "0 4px 20px rgba(92, 95, 95, 0.3)" }}
+
+// Assistant messages (left-aligned, black background)
+className="bg-black text-white rounded-bl-none"
+style={{ boxShadow: "0 4px 20px rgba(201, 194, 194, 0.73)" }}
+```
+
+### Voice Input System
+Voice recording uses press-and-hold pattern with visual feedback:
+```tsx
+onMouseDown={startVoice}
+onMouseUp={stopVoice}
+onMouseLeave={() => isRecording && stopVoice()}
+onTouchStart={(e) => { e.preventDefault(); startVoice(); }}
+onTouchEnd={(e) => { e.preventDefault(); stopVoice(); }}
+```
+
+### Animation States & Transitions
+Loading animations use phased transitions with fade effects:
+```tsx
+const switchPhase = useCallback((targetPhase: LOADING_PHASE) => {
+  setIsVisible(false); // Fade out
+  setTimeout(() => {
+    setCurLoadingPhase(targetPhase);
+    setTimeout(() => {
+      setIsVisible(true); // Fade in
+    }, 300);
+  }, 300);
+}, []);
+```
+
 ## Environment Setup
 
 Copy `.env.example` to `.env.local` and configure:
@@ -113,14 +166,33 @@ Copy `.env.example` to `.env.local` and configure:
 - ✅ Basic project structure and routing
 - ✅ Mobile-first layout system
 - ✅ Configuration-driven theming
-- ✅ Mock AI responses (replace with real OpenAI integration)
+- ✅ Chat interface with text and voice input
+- ✅ Voice recording with AudioLines animation component
+- ✅ Message bubbles with distinct styling for user/assistant
+- ✅ Multi-phase loading animations (chewing → done → grow horn)
+- ✅ Character mascot animations and emotional feedback
+- ✅ Optimized user authentication with Supabase JWT
+- ✅ Async chat history synchronization
+- ✅ Chat interface z-index layer fixes
+- ✅ Enhanced note submission loading animations
+- ⏳ Real OpenAI integration for chat responses
 - ⏳ Supabase database schema needs to be created
-- ⏳ Real authentication flow implementation needed
+- ⏳ Real-time voice-to-text processing needed
 
 ## File Structure Conventions
 
 - `src/components/` - Reusable UI components
+  - `chat/` - Chat interface components (InputField, MessageList)
+  - `audiolines/` - Voice recording animation components
+  - `notes/` - Note-related components (NoteCard, NoteTypeCard, etc.)
+  - `notebox/` - Note display and management components
+  - `mascot/` - Character animation components
+  - `layout/` - Layout components (AppShell, TopBar)
+  - `ui/` - Base UI components (Button, Card, Input, etc.)
 - `src/lib/` - Utilities and configurations
 - `src/hooks/` - Custom React hooks
 - `src/app/actions/` - Server Actions
+- `public/images/` - Static assets organized by feature:
+  - `chat/` - Chat interface icons and bubbles
+  - `mascot/` - Character animations and decorations
 - Component files match export names: `NoteCard.tsx` exports `NoteCard`
