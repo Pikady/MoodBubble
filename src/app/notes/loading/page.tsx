@@ -219,10 +219,10 @@ export default function NoteLoading() {
       <img className='absolute right-[10%] top-[-15%] transition-opacity duration-300' src={imgDecorationChewDone} alt="装饰元素" />
       <div className='flex justify-center mt-10'>
         <Button
-          className='flex rounded-[30px] w-[80%] whitespace-normal h-[70px]'
+          className='flex rounded-[30px] w-[80%] whitespace-normal min-h-[70px] py-4'
           onClick={() => switchPhase(LOADING_PHASE.GROW)}
         >
-          <span className='text-[18px]/6 text-left mx-2'>
+          <span className='text-[18px]/6 text-left mx-2 break-words overflow-wrap-normal'>
             {aiResponse || '太好啦！！真为你开心，这是你主动迈出的第一步！'}
           </span>
         </Button>
