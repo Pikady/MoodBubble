@@ -67,7 +67,7 @@ export default function NewNotePage() {
 
       {/* 丝带列表：父容器要允许溢出；bleedPx=16 对齐上面的 px-4 */}
       <div className="px-4 pb-8 overflow-visible">
-        <div className="mt-4 space-y-3 overflow-visible relative">
+        <div className="mt-4 space-y-3 overflow-visible relative min-h-[330px]">
           {items.map((it, index) => (
             <NoteTypeCard
               key={it.type}

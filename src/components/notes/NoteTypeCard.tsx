@@ -50,22 +50,22 @@ export default function NoteTypeCard({
   const posClassConfig = [
     {
       left: "left-[30px]",
-      top: "top-[20px]",
+      top: "top-[21px]",
       icon: <Moon></Moon>,
     },
     {
       left: "left-[60px]",
-      top: "top-[100px]",
+      top: "top-[85px]",
       icon: <Smile></Smile>,
     },
     {
-      left: "left-[20px]",
-      top: "top-[200px]",
+      left: "left-[40px]",
+      top: "top-[165px]",
       icon: <img src={iconEmotion} alt="" />,
     },
     {
-      left: "left-[100px]",
-      top: "top-[290px]",
+      left: "left-[80px]",
+      top: "top-[240px]",
       icon: <img src={iconThought} alt="" />,
     },
   ];
@@ -74,7 +74,7 @@ export default function NoteTypeCard({
   const inner = (
     <div
       className={cn(
-        "rounded-3xl px-6 py-5 shadow-sm active:shadow h-[100%]",
+        "rounded-3xl px-5 py-4 shadow-sm active:shadow h-[100%]",
         "active:scale-[0.99] select-none flex",
         bg
       )}
@@ -114,7 +114,7 @@ export default function NoteTypeCard({
         href={href}
         aria-label={a11y["aria-label"] ?? `选择${displayTitle}`}
         onClick={onClick}
-        className={cn("block overflow-visible rotate-[-5deg] w-[100%] absolute h-[90px] transition-transform duration-300 ease-in-out hover:translate-x-[-10px] hover:translate-y-[2px]",
+        className={cn("block overflow-visible rotate-[-5deg] w-[100%] absolute h-[75px] transition-transform duration-300 ease-in-out hover:translate-x-[-10px] hover:translate-y-[2px]",
           posClassConfig[index].left,
           posClassConfig[index].top,
         )} // 关键：外层 link 也别裁剪
