@@ -124,30 +124,6 @@ export default function LoginForm({
           </p>
         </div>
 
-        {showDemoAccount && (
-          <>
-            <div className="mt-4 text-center">
-              <p className="text-sm text-gray-600">
-                <button
-                  onClick={() => {
-                    setEmail('someone@email.com');
-                    setPassword('XaXIlMdAWdTVvJSORPEf');
-                  }}
-                  className="text-blue-600 hover:underline font-medium"
-                >
-                  填入示例账号
-                </button>
-              </p>
-            </div>
-
-            <div className="mt-2 text-center">
-              <p className="text-xs text-gray-500">
-                示例账号：user@example.com<br/>
-                示例密码：123456
-              </p>
-            </div>
-          </>
-        )}
       </CardContent>
     </Card>
   );
