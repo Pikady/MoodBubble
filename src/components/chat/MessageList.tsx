@@ -1,5 +1,5 @@
 // components/MessageList.tsx
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface Message {
@@ -14,6 +14,18 @@ interface MessageListProps {
 }
 
 const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 自动滚动到底部
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // 每当消息列表更新时，滚动到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isLoading]);
+
   return (
     <div className="flex-1 overflow-y-auto px-4 pt-6 pb-[10px] space-y-6">
       <motion.div className="space-y-6">
@@ -50,6 +62,8 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
 
 
       </motion.div>
+      {/* 用于自动滚动到底部的隐藏元素 */}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
